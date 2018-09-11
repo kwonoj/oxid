@@ -85,14 +85,12 @@ const resolveURL = (url: string) => {
   const msie = /(msie|trident)/i.test(navigator.userAgent);
   const urlParsingNode = document.createElement('a');
 
-  let href = url;
-
   if (msie) {
     // IE needs attribute set twice to normalize properties
-    urlParsingNode.setAttribute('href', href);
-    href = urlParsingNode.href;
+    urlParsingNode.setAttribute('href', url);
   }
 
+  const href = msie ? urlParsingNode.href : url;
   urlParsingNode.setAttribute('href', href);
 
   // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
@@ -128,13 +126,13 @@ const isAbsoluteURL = (url: string): boolean => /^([a-z][a-z\d\+\-\.]*:)?\/\//i.
  */
 const isURLSameOrigin = isStandardBrowserEnv()
   ? (() => {
-      const originURL = resolveURL(window.location.href);
+    const originURL = resolveURL(window.location.href);
 
-      return (requestURL: string | ReturnType<typeof resolveURL>) => {
-        const parsed = isString(requestURL) ? resolveURL(requestURL) : requestURL;
-        return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
-      };
-    })()
+    return (requestURL: string | Partial<ReturnType<typeof resolveURL>>) => {
+      const parsed = isString(requestURL) ? resolveURL(requestURL) : requestURL;
+      return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
+    };
+  })()
   : () => true;
 
 export { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin };
