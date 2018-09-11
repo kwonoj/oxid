@@ -1,5 +1,5 @@
 import { URLSearchParams } from 'url';
-import { buildURL } from '../../src/utils/buildURL';
+import { buildURL } from '../../src/utils/urls';
 
 describe('buildURL', () => {
   it('should support null params', () => {
