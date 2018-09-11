@@ -1,5 +1,5 @@
 import { URLSearchParams } from 'url';
-import { buildURL, combineURLs, isAbsoluteURL } from '../../src/utils/urls';
+import { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin } from '../../src/utils/urls';
 
 describe('urls', () => {
   describe('buildURL', () => {
@@ -132,6 +132,17 @@ describe('urls', () => {
     it('should return false if URL is relative', () => {
       expect(isAbsoluteURL('/foo')).toBe(false);
       expect(isAbsoluteURL('foo')).toBe(false);
+    });
+  });
+
+  // NOTE: this test passes via jsdom on node.js
+  describe('isURLSameOrigin', function() {
+    it('should detect same origin', function() {
+      expect(isURLSameOrigin(window.location.href)).toEqual(true);
+    });
+
+    it('should detect different origin', function() {
+      expect(isURLSameOrigin('https://github.com/axios/axios')).toEqual(false);
     });
   });
 });

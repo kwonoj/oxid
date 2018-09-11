@@ -6,7 +6,7 @@
     "**/spec/**/*-spec.ts"
   ],
   "bail": true,
-  "testEnvironment": "node",
+  "testEnvironment": "jsdom",
   "moduleFileExtensions": [
     "js",
     "jsx",

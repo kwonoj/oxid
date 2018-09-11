@@ -1,5 +1,4 @@
-import { isDate } from 'util';
-import { isObject, isURLSearchParams } from './base';
+import { isDate, isObject, isStandardBrowserEnv, isString, isURLSearchParams } from './base';
 
 const encode = (val: string) =>
   encodeURIComponent(val)
@@ -77,6 +76,39 @@ const combineURLs = (base: string, relative: string): string =>
   relative ? base.replace(/\/+$/, '') + '/' + relative.replace(/^\/+/, '') : base;
 
 /**
+ * Parse a URL to discover it's components
+ * @param {String} url The URL to be parsed
+ */
+const resolveURL = (url: string) => {
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  const msie = /(msie|trident)/i.test(navigator.userAgent);
+  const urlParsingNode = document.createElement('a');
+
+  let href = url;
+
+  if (msie) {
+    // IE needs attribute set twice to normalize properties
+    urlParsingNode.setAttribute('href', href);
+    href = urlParsingNode.href;
+  }
+
+  urlParsingNode.setAttribute('href', href);
+
+  // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+  return {
+    href: urlParsingNode.href,
+    protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+    host: urlParsingNode.host,
+    search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+    hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+    hostname: urlParsingNode.hostname,
+    port: urlParsingNode.port,
+    pathname: urlParsingNode.pathname.charAt(0) === '/' ? urlParsingNode.pathname : '/' + urlParsingNode.pathname
+  };
+};
+
+/**
  * Determines whether the specified URL is absolute
  *
  * @param {string} url The URL to test
@@ -88,4 +120,21 @@ const combineURLs = (base: string, relative: string): string =>
  */
 const isAbsoluteURL = (url: string): boolean => /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 
-export { buildURL, combineURLs, isAbsoluteURL };
+/**
+ * Determine if a URL shares the same origin as the current location
+ *
+ * @param {String} requestURL The URL to test
+ * @returns {boolean} True if URL shares the same origin, otherwise false
+ */
+const isURLSameOrigin = isStandardBrowserEnv()
+  ? (() => {
+      const originURL = resolveURL(window.location.href);
+
+      return (requestURL: string | ReturnType<typeof resolveURL>) => {
+        const parsed = isString(requestURL) ? resolveURL(requestURL) : requestURL;
+        return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
+      };
+    })()
+  : () => true;
+
+export { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin };
