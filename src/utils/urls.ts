@@ -14,23 +14,23 @@ const encode = (val: string) =>
 /**
  * Build a URL by appending params to the end
  *
- * @param string url The base of the url (e.g., http://www.google.com)
- * @param Record<string, any> [params] The params to be appended
- * @param (params: Record<string, string>) => string [paramsSerializer] custom serializer
+ * @param {string} url The base of the url (e.g., http://www.google.com)
+ * @param {Record<string, any>} [params] The params to be appended
+ * @param {(}params: Record<string, string>)} => string [paramsSerializer] custom serializer
  * @returns {string} The formatted url
  */
 const buildURL = (
   url: string,
   params?: Record<string, any>,
   paramsSerializer?: (params: Record<string, any>) => string
-) => {
+): string => {
   if (!params) {
     return url;
   }
 
   const constructUrl = (serializedParams: string) => {
     if (!serializedParams) {
-      return;
+      return url;
     }
 
     const hashmarkIndex = url.indexOf('#');
@@ -66,4 +66,14 @@ const buildURL = (
   }
 };
 
-export { buildURL };
+/**
+ * Creates a new URL by combining the specified URLs
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} relativeURL The relative URL
+ * @returns {string} The combined URL
+ */
+const combineURLs = (base: string, relative: string): string =>
+  relative ? base.replace(/\/+$/, '') + '/' + relative.replace(/^\/+/, '') : base;
+
+export { buildURL, combineURLs };
