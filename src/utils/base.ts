@@ -1,5 +1,7 @@
 import { root } from 'getroot';
 
+const toPrototypeString = (val: any) => Object.prototype.toString.call(val);
+
 /**
  * Naïvely detect if running environment if node
  * Note this'll return true on Electron's renderer process as well
@@ -18,6 +20,14 @@ const isNode = () => {
 };
 
 /**
+ * Determine if a value is a String
+ *
+ * @param {any} val The value to test
+ * @returns {boolean} True if value is a String, otherwise false
+ */
+const isString = (val: any): val is String => typeof val === 'string';
+
+/**
  * Determine if a value is an Object
  *
  * @param unknown val The value to test
@@ -31,7 +41,7 @@ const isObject = (val: unknown) => val !== null && typeof val === 'object';
  * @param any val The value to test
  * @returns boolean True if value is a Date, otherwise false
  */
-const isDate = (val: any) => !!val && !!val.toString && val.toString() === '[object Date]';
+const isDate = (val: any): val is Date => !!val && !!val.toString && toPrototypeString(val) === '[object Date]';
 
 /**
  * Determine if a value is a URLSearchParams object
@@ -74,4 +84,4 @@ const isStandardBrowserEnv = () => {
   return typeof window !== 'undefined' && typeof document !== 'undefined';
 };
 
-export { isObject, isDate, isURLSearchParams, isStandardBrowserEnv };
+export { isString, isObject, isDate, isURLSearchParams, isStandardBrowserEnv };
