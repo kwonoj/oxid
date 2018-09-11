@@ -1,0 +1,40 @@
+{
+  "transform": {
+    ".(js|jsx|ts|tsx)": "ts-jest"
+  },
+  "testMatch": [
+    "**/spec/**/*-spec.ts"
+  ],
+  "bail": true,
+  "testEnvironment": "node",
+  "moduleFileExtensions": [
+    "js",
+    "jsx",
+    "json",
+    "ts",
+    "tsx"
+  ],
+  "modulePathIgnorePatterns": [
+    "/.tmp/",
+    "/dist/"
+  ],
+  "testPathIgnorePatterns": [
+    "/.tmp/",
+    "/dist/"
+  ],
+  "coverageReporters": [
+    "lcov"
+  ],
+  "reporters": [
+    "jest-spin-reporter"
+  ],
+  "collectCoverageFrom": [
+    "src/**/*.{ts, tsx}",
+    "!**/*.d.ts"
+  ],
+  "coveragePathIgnorePatterns": [
+    "<rootDir>/node_modules/",
+    "<rootDir>/spec/.*\\.(ts|js)$",
+    "<rootDir>/build/.*\\.(ts|js)$"
+  ]
+}
