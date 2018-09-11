@@ -1,7 +1,7 @@
-import * as URLSearchParams from 'url-search-params';
+import { URLSearchParams } from 'url';
 import { buildURL } from '../../src/utils/buildURL';
 
-describe('helpers::buildURL', () => {
+describe('buildURL', () => {
   it('should support null params', () => {
     expect(buildURL('/foo')).toEqual('/foo');
   });
@@ -77,7 +77,6 @@ describe('helpers::buildURL', () => {
   });
 
   it('should use serializer if provided', () => {
-    //serializer = sinon.stub();
     const serializer = jest.fn(() => 'foo=bar');
     const params = { foo: 'bar' };
     expect(buildURL('/foo', params, serializer)).toEqual('/foo?foo=bar');
