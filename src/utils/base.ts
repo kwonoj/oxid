@@ -77,6 +77,30 @@ const isStream = (val: any): val is Stream => isObject(val) && isFunction(val.pi
 const isArrayBuffer = (val: any): val is ArrayBuffer => toString.call(val) === '[object ArrayBuffer]';
 
 /**
+ * Determine if a value is a FormData
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an FormData, otherwise false
+ */
+const isFormData = (val: any): val is FormData => typeof FormData !== 'undefined' && val instanceof FormData;
+
+/**
+ * Determine if a value is a File
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a File, otherwise false
+ */
+const isFile = (val: any) => toString.call(val) === '[object File]';
+
+/**
+ * Determine if a value is a Blob
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Blob, otherwise false
+ */
+const isBlob = (val: any) => toString.call(val) === '[object Blob]';
+
+/**
  * Determine if a value is a URLSearchParams object
  *
  * @param unknown val The value to test
@@ -128,4 +152,18 @@ const pick = (value: Record<string, any>, ...props: Array<string>) =>
     return acc;
   }, {});
 
-export { isString, isObject, isArrayBuffer, isNumber, isStream, isDate, isURLSearchParams, isStandardBrowserEnv, pick };
+export {
+  isNode,
+  isFormData,
+  isFile,
+  isBlob,
+  isString,
+  isObject,
+  isArrayBuffer,
+  isNumber,
+  isStream,
+  isDate,
+  isURLSearchParams,
+  isStandardBrowserEnv,
+  pick
+};

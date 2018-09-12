@@ -5,6 +5,10 @@
  * @param normalizedName
  */
 const normalizeHeaderName = (headers: Record<string, any>, normalizedName: string) => {
+  if (!headers) {
+    return;
+  }
+
   Object.keys(headers)
     .filter(key => key !== normalizedName && key.toUpperCase() === normalizedName.toUpperCase())
     .map(key => ({ key, value: headers[key] }))
