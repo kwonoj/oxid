@@ -18,10 +18,17 @@ const isHttps = /https:?/;
 
 const httpadapter = (config: any) =>
   //TODO: Observable type need to be defined
-  //TODO: prevent to error/next/complete if any occurred (wrapper fn)
   //TODO: enhance check around !
   new Observable((observer: Observer<any>) => {
     const { emitError, emitComplete } = getObserverHandler(observer);
+    let transportRequest: http.ClientRequest;
+    const tearDown = () => {
+      if (!transportRequest || transportRequest.aborted) {
+        return;
+      }
+      transportRequest.abort();
+    };
+
     let data = config.data;
     let headers = config.headers;
 
@@ -42,6 +49,7 @@ const httpadapter = (config: any) =>
         emitError(
           createError('Data after transformation must be a string, an ArrayBuffer, a Buffer, or a Stream', config)
         );
+        return tearDown;
       }
 
       // Add Content-Length header if data exists
@@ -99,11 +107,9 @@ const httpadapter = (config: any) =>
         let shouldProxy = true;
 
         if (noProxyEnv) {
-          let noProxy = noProxyEnv.split(',').map(function trim(s) {
-            return s.trim();
-          });
+          const noProxy = noProxyEnv.split(',').map(s => s.trim());
 
-          shouldProxy = !noProxy.some(function proxyMatch(proxyElement) {
+          shouldProxy = !noProxy.some(proxyElement => {
             if (!proxyElement) {
               return false;
             }
@@ -157,7 +163,7 @@ const httpadapter = (config: any) =>
     }
 
     let transport: { request: typeof import('http').request };
-    let isHttpsProxy = isHttpsRequest && (proxy ? isHttps.test(proxy.protocol) : true);
+    const isHttpsProxy = isHttpsRequest && (proxy ? isHttps.test(proxy.protocol) : true);
     if (config.transport) {
       transport = config.transport;
     } else if (config.maxRedirects === 0) {
@@ -174,8 +180,9 @@ const httpadapter = (config: any) =>
     }
 
     // Create the request
-    let req = transport.request(options, function handleResponse(res) {
-      if (req.aborted) {
+    transportRequest = transport.request(options, function handleResponse(res) {
+      if (transportRequest.aborted) {
+        //TODO: should it error?
         return;
       }
 
@@ -194,7 +201,7 @@ const httpadapter = (config: any) =>
       }
 
       // return the last request in case of redirects
-      let lastRequest = (res as any).req || req;
+      let lastRequest = (res as any).req || transportRequest;
 
       let response = {
         status: res.statusCode || Number.NaN,
@@ -226,7 +233,7 @@ const httpadapter = (config: any) =>
         });
 
         stream.on('error', function handleStreamError(err) {
-          if (req.aborted) {
+          if (transportRequest.aborted) {
             return;
           }
           emitError(enhanceError(err, config, null, lastRequest));
@@ -245,28 +252,21 @@ const httpadapter = (config: any) =>
     });
 
     // Handle errors
-    req.on('error', function handleRequestError(err) {
-      if (req.aborted) {
+    transportRequest.on('error', function handleRequestError(err) {
+      if (transportRequest.aborted) {
         return;
       }
-      emitError(enhanceError(err, config, null, req));
+      emitError(enhanceError(err, config, null, transportRequest));
     });
 
     // Send the request
     if (isStream(data)) {
-      data.on('error', err => emitError(enhanceError(err, config, null, req))).pipe(req);
+      data.on('error', err => emitError(enhanceError(err, config, null, transportRequest))).pipe(transportRequest);
     } else {
-      req.end(data);
+      transportRequest.end(data);
     }
 
-    // This is the return from the Observable function, which is the
-    // request cancellation handler.
-    return () => {
-      if (req.aborted) {
-        return;
-      }
-      req.abort();
-    };
+    return tearDown;
   });
 
 export { httpadapter as adapter };
