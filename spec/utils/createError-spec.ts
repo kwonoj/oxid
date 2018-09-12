@@ -1,4 +1,4 @@
-import { createError, enhanceError } from '../../src/core/createError';
+import { createError, enhanceError } from '../../src/utils/createError';
 
 describe('createError', () => {
   it('should create an Error with message, config, code, request, response', () => {
@@ -6,13 +6,14 @@ describe('createError', () => {
     const response = { status: 200, data: { foo: 'bar' } };
     const error = createError('Boom!', { foo: 'bar' }, 'ESOMETHING', request, response);
 
-    expect(error instanceof Error).toBe(true);
-    expect(error.message).toBe('Boom!');
-    expect(error.config).toEqual({ foo: 'bar' });
-    expect(error.code).toBe('ESOMETHING');
-    expect(error.request).toBe(request);
-    expect(error.response).toBe(response);
-    expect(error.fromOxid).toBe(true);
+    expect(error).toBeInstanceOf(Error);
+    expect(error).toMatchObject({
+      message: 'Boom!',
+      config: { foo: 'bar' },
+      code: 'ESOMETHING',
+      request,
+      response
+    });
   });
 
   it('should create an Error that can be serialized to JSON', () => {
@@ -23,11 +24,11 @@ describe('createError', () => {
     const error = createError('Boom!', { foo: 'bar' }, 'ESOMETHING', request, response);
     const json = error.toJSON();
 
-    expect(json.message).toBe('Boom!');
-    expect(json.config).toEqual({ foo: 'bar' });
-    expect(json.code).toBe('ESOMETHING');
-    expect(json.request).toBe(undefined);
-    expect(json.response).toBe(undefined);
+    expect(json).toMatchObject({
+      message: 'Boom!',
+      config: { foo: 'bar' },
+      code: 'ESOMETHING'
+    });
   });
 });
 
@@ -38,11 +39,13 @@ describe('enhanceError', () => {
     const response = { status: 200, data: { foo: 'bar' } };
 
     const error = enhanceError(originalError, { foo: 'bar' }, 'ESOMETHING', request, response);
-    expect(error.config).toEqual({ foo: 'bar' });
-    expect(error.code).toBe('ESOMETHING');
-    expect(error.request).toBe(request);
-    expect(error.response).toBe(response);
-    expect(error.fromOxid).toBe(true);
+    expect(error).toMatchObject({
+      message: 'Boom!',
+      config: { foo: 'bar' },
+      code: 'ESOMETHING',
+      request,
+      response
+    });
   });
 
   it('should return error', () => {

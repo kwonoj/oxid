@@ -1,4 +1,4 @@
-import { pick } from '../utils/base';
+import { pick } from './base';
 
 /**
  * Update an Error with the specified config, error code, and response.
@@ -30,7 +30,6 @@ const enhanceError = (
 
   error.request = request;
   error.response = response;
-  error.fromOxid = true;
 
   error.toJSON = () =>
     pick(
