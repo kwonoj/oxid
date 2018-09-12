@@ -10,8 +10,8 @@ import { isString } from 'util';
 import { oxidVersion } from '../metadata';
 import { OxidResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
-import { completeObservable } from '../utils/completeObservable';
 import { createError, enhanceError } from '../utils/createError';
+import { getObserverHandler } from '../utils/getObserverHandler';
 import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
@@ -21,6 +21,7 @@ const httpadapter = (config: any) =>
   //TODO: prevent to error/next/complete if any occurred (wrapper fn)
   //TODO: enhance check around !
   new Observable((observer: Observer<any>) => {
+    const { emitError, emitComplete } = getObserverHandler(observer);
     let data = config.data;
     let headers = config.headers;
 
@@ -38,7 +39,7 @@ const httpadapter = (config: any) =>
       } else if (isString(data)) {
         data = Buffer.from(data, 'utf-8');
       } else {
-        observer.error(
+        emitError(
           createError('Data after transformation must be a string, an ArrayBuffer, a Buffer, or a Stream', config)
         );
       }
@@ -205,7 +206,7 @@ const httpadapter = (config: any) =>
 
       if (config.responseType === 'stream') {
         response.data = stream;
-        completeObservable(observer, response);
+        emitComplete(response);
       } else {
         const responseBuffer: Array<any> = [];
         stream.on('data', function handleStreamData(chunk) {
@@ -213,7 +214,7 @@ const httpadapter = (config: any) =>
 
           // make sure the content length is not over the maxContentLength if specified
           if (config.maxContentLength > -1 && Buffer.concat(responseBuffer).length > config.maxContentLength) {
-            observer.error(
+            emitError(
               createError(
                 'maxContentLength size of ' + config.maxContentLength + ' exceeded',
                 config,
@@ -228,7 +229,7 @@ const httpadapter = (config: any) =>
           if (req.aborted) {
             return;
           }
-          observer.error(enhanceError(err, config, null, lastRequest));
+          emitError(enhanceError(err, config, null, lastRequest));
         });
 
         stream.on('end', function handleStreamEnd() {
@@ -238,7 +239,7 @@ const httpadapter = (config: any) =>
           }
 
           response.data = responseData;
-          completeObservable(observer, response);
+          emitComplete(response);
         });
       }
     });
@@ -248,12 +249,12 @@ const httpadapter = (config: any) =>
       if (req.aborted) {
         return;
       }
-      observer.error(enhanceError(err, config, null, req));
+      emitError(enhanceError(err, config, null, req));
     });
 
     // Send the request
     if (isStream(data)) {
-      data.on('error', err => observer.error(enhanceError(err, config, null, req))).pipe(req);
+      data.on('error', err => emitError(enhanceError(err, config, null, req))).pipe(req);
     } else {
       req.end(data);
     }
