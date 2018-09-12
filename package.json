@@ -85,7 +85,9 @@
     "rxjs": "6.x"
   },
   "dependencies": {
+    "follow-redirects": "^1.5.8",
     "getroot": "^1.0.0",
+    "is-buffer": "^2.0.3",
     "tslib": "^1.9.3"
   }
 }
