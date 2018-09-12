@@ -28,6 +28,14 @@ const isNode = () => {
 const isString = (val: any): val is String => typeof val === 'string';
 
 /**
+ * Determine if a value is a Number
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Number, otherwise false
+ */
+const isNumber = (val: any): val is number => typeof val === 'number';
+
+/**
  * Determine if a value is an Object
  *
  * @param unknown val The value to test
@@ -84,4 +92,4 @@ const isStandardBrowserEnv = () => {
   return typeof window !== 'undefined' && typeof document !== 'undefined';
 };
 
-export { isString, isObject, isDate, isURLSearchParams, isStandardBrowserEnv };
+export { isString, isObject, isNumber, isDate, isURLSearchParams, isStandardBrowserEnv };
