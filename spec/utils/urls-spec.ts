@@ -142,7 +142,7 @@ describe('urls', () => {
     });
 
     it('should detect different origin', function() {
-      expect(isURLSameOrigin('https://github.com/axios/axios')).toEqual(false);
+      expect(isURLSameOrigin('https://github.com/kwonoj/oxid')).toEqual(false);
     });
   });
 });
