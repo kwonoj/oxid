@@ -92,4 +92,15 @@ const isStandardBrowserEnv = () => {
   return typeof window !== 'undefined' && typeof document !== 'undefined';
 };
 
-export { isString, isObject, isNumber, isDate, isURLSearchParams, isStandardBrowserEnv };
+/**
+ * Naïve implementation of `pick<T, U>()`.
+ */
+const pick = (value: Record<string, any>, ...props: Array<string>) =>
+  props.reduce((acc, prop) => {
+    if (value[prop]) {
+      acc[prop] = value[prop];
+    }
+    return acc;
+  }, {});
+
+export { isString, isObject, isNumber, isDate, isURLSearchParams, isStandardBrowserEnv, pick };
