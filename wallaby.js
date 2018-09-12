@@ -1,5 +1,5 @@
-module.exports = wallaby => ({
-  files: ['src/**/*.ts', { pattern: 'spec/**/!(*-spec).ts', instrument: false, load: true }],
+module.exports = _wallaby => ({
+  files: ['src/**/*.ts'],
 
   tests: ['spec/**/*-spec.ts'],
 
