@@ -13,7 +13,7 @@ import { pick } from './base';
 const enhanceError = (
   error: Error & Record<string, any>,
   config?: object,
-  code?: string,
+  code?: string | null,
   request?: object,
   response?: object
 ): Error &
@@ -61,7 +61,7 @@ const enhanceError = (
 const createError = (
   message: string,
   config?: object,
-  code?: string,
+  code?: string | null,
   request?: object,
   response?: object
 ): ReturnType<typeof enhanceError> => enhanceError(new Error(message), config, code, request, response);

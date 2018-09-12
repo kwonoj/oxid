@@ -1,4 +1,5 @@
 import { root } from 'getroot';
+import { Stream } from 'stream';
 
 const toPrototypeString = (val: any) => Object.prototype.toString.call(val);
 
@@ -52,6 +53,30 @@ const isObject = (val: unknown) => val !== null && typeof val === 'object';
 const isDate = (val: any): val is Date => !!val && !!val.toString && toPrototypeString(val) === '[object Date]';
 
 /**
+ * Determine if a value is a Function
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Function, otherwise false
+ */
+const isFunction = (val: any): val is Function => toString.call(val) === '[object Function]';
+
+/**
+ * Determine if a value is a Stream
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Stream, otherwise false
+ */
+const isStream = (val: any): val is Stream => isObject(val) && isFunction(val.pipe);
+
+/**
+ * Determine if a value is an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+ */
+const isArrayBuffer = (val: any): val is ArrayBuffer => toString.call(val) === '[object ArrayBuffer]';
+
+/**
  * Determine if a value is a URLSearchParams object
  *
  * @param unknown val The value to test
@@ -70,7 +95,7 @@ const isURLSearchParams = (val: unknown) => {
 /**
  * Determine if we're running in a standard browser environment
  *
- * This allows axios to run in a web worker, and react-native.
+ * This allows to run in a web worker, and react-native.
  * Both environments support XMLHttpRequest, but not fully standard globals.
  *
  * web workers:
@@ -103,4 +128,4 @@ const pick = (value: Record<string, any>, ...props: Array<string>) =>
     return acc;
   }, {});
 
-export { isString, isObject, isNumber, isDate, isURLSearchParams, isStandardBrowserEnv, pick };
+export { isString, isObject, isArrayBuffer, isNumber, isStream, isDate, isURLSearchParams, isStandardBrowserEnv, pick };
