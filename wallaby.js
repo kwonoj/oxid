@@ -9,10 +9,5 @@ module.exports = wallaby => ({
 
   env: {
     type: 'node'
-  },
-
-  workers: {
-    initial: 1,
-    regular: 1
   }
 });
