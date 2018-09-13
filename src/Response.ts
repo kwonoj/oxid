@@ -1,11 +1,11 @@
-import { Requestconfig } from './Request';
+import { RequestConfig } from './Request';
 
 interface OxidResponse<T = any> {
   data: T;
   status: number;
   statusText: string;
   headers: any;
-  config: Requestconfig;
+  config: RequestConfig;
   request?: any;
 }
 

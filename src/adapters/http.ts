@@ -8,7 +8,7 @@ import * as zlib from 'zlib';
 
 import { isString } from 'util';
 import { oxidVersion } from '../metadata';
-import { ProxyConfig, Requestconfig } from '../Request';
+import { ProxyConfig, RequestConfig } from '../Request';
 import { OxidResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
@@ -17,7 +17,7 @@ import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
 
-const httpadapter = <T = any>(config: Requestconfig) =>
+const httpadapter = <T = any>(config: RequestConfig) =>
   //TODO: Observable type need to be defined
   //TODO: enhance check around !
   new Observable((observer: Observer<OxidResponse<T>>) => {
