@@ -1,5 +1,6 @@
 import * as isBuffer from 'is-buffer';
 
+import { Adapter } from './Request';
 import { isArrayBuffer, isBlob, isFile, isFormData, isNode, isObject, isStream, isURLSearchParams } from './utils/base';
 import { normalizeHeaderName } from './utils/normalizeHeaderName';
 
@@ -13,7 +14,7 @@ const setContentTypeIfUnset = (headers: Record<string, any> | undefined, value: 
   }
 };
 
-const getDefaultAdapter = () =>
+const getDefaultAdapter = (): Adapter =>
   isNode()
     ? require('./adapters/http').adapter //tslint:disable-line:no-require-imports
     : (() => {

@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { OxidResponse } from './Response';
 
 type Method = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch';
 type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream';
@@ -15,13 +16,12 @@ interface ProxyConfig {
   protocol?: string;
 }
 
-//TODO: Observable type need to be defined
 interface Adapter {
-  (config: Requestconfig): Observable<any>;
+  <T = any>(config: Requestconfig): Observable<OxidResponse<T>>;
 }
 
 interface Transformer {
-  (data: any, headers?: any): any;
+  (data: object | string, headers?: Array<Record<string, any>>): object | string;
 }
 
 interface Requestconfig {
