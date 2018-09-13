@@ -17,10 +17,10 @@ import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
 
-const httpadapter = (config: Requestconfig) =>
+const httpadapter = <T = any>(config: Requestconfig) =>
   //TODO: Observable type need to be defined
   //TODO: enhance check around !
-  new Observable((observer: Observer<any>) => {
+  new Observable((observer: Observer<OxidResponse<T>>) => {
     const { emitError, emitComplete } = getObserverHandler(observer);
     let transportRequest: http.ClientRequest;
 
