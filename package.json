@@ -21,7 +21,7 @@
     ]
   },
   "scripts": {
-    "prepublish": "npm prune && npm run build",
+    "prepare": "npm run prepush",
     "precommit": "lint-staged",
     "prepush": "npm-run-all build test",
     "commitmsg": "commitlint -e",

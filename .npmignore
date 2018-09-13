@@ -7,7 +7,9 @@ typings/
 .vscode/
 src/
 spec/
+scripts/
 !dist/src
+dist/scripts/
 examples/
 .travis.yml
 appveyor.yml
@@ -18,3 +20,5 @@ wallaby.js
 .circleci/
 tsconfig.json
 commitlint.config.js
+*.yml
+*.tgz

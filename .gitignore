@@ -39,3 +39,5 @@ typings
 .node_repl_history
 
 src/metadata.ts
+
+*.tgz
