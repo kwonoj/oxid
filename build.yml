@@ -1,0 +1,25 @@
+parameters:
+  name: ''
+  pool: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  pool: ${{ parameters.pool }}
+  strategy:
+    matrix:
+      node8:
+        nodeVersion: '8.x'
+      #node9:
+      #  nodeVersion: '9.x'
+      #node10:
+      #  nodeVersion: '10.x'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(nodeVersion)
+  - script: npm install -g npm@6 && node -v && npm -v
+    displayName: Update npm
+  - script: npm ci
+    displayName: Install package, build, run unit test
+  - script: npm run lint
+    displayName: Lint
