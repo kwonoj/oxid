@@ -8,6 +8,7 @@ import * as zlib from 'zlib';
 
 import { isString } from 'util';
 import { oxidVersion } from '../metadata';
+import { ProxyConfig, Requestconfig } from '../Request';
 import { OxidResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
@@ -16,12 +17,13 @@ import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
 
-const httpadapter = (config: any) =>
+const httpadapter = (config: Requestconfig) =>
   //TODO: Observable type need to be defined
   //TODO: enhance check around !
   new Observable((observer: Observer<any>) => {
     const { emitError, emitComplete } = getObserverHandler(observer);
     let transportRequest: http.ClientRequest;
+
     const tearDown = () => {
       if (!transportRequest || transportRequest.aborted) {
         return;
@@ -29,8 +31,13 @@ const httpadapter = (config: any) =>
       transportRequest.abort();
     };
 
+    if (!config.url || !config.method) {
+      emitError(createError(`Invalid request configuration`));
+      return tearDown;
+    }
+
     let data = config.data;
-    let headers = config.headers;
+    const headers = config.headers;
 
     // Set User-Agent (required by some servers)
     // Only set header if it hasn't been set in config
@@ -59,19 +66,19 @@ const httpadapter = (config: any) =>
     // HTTP basic authentication
     let auth = undefined;
     if (config.auth) {
-      let username = config.auth.username || '';
-      let password = config.auth.password || '';
+      const username = config.auth.username || '';
+      const password = config.auth.password || '';
       auth = username + ':' + password;
     }
 
     // Parse url
-    let parsed = url.parse(config.url);
-    let protocol = parsed.protocol || 'http:';
+    const parsed = url.parse(config.url);
+    const protocol = parsed.protocol || 'http:';
 
     if (!auth && parsed.auth) {
-      let urlAuth = parsed.auth.split(':');
-      let urlUsername = urlAuth[0] || '';
-      let urlPassword = urlAuth[1] || '';
+      const urlAuth = parsed.auth.split(':');
+      const urlUsername = urlAuth[0] || '';
+      const urlPassword = urlAuth[1] || '';
       auth = urlUsername + ':' + urlPassword;
     }
 
@@ -79,10 +86,10 @@ const httpadapter = (config: any) =>
       delete headers.Authorization;
     }
 
-    let isHttpsRequest = isHttps.test(protocol);
-    let agent = isHttpsRequest ? config.httpsAgent : config.httpAgent;
+    const isHttpsRequest = isHttps.test(protocol);
+    const agent = isHttpsRequest ? config.httpsAgent : config.httpAgent;
 
-    let options: any = {
+    const options: any = {
       path: buildURL(parsed.path!, config.params, config.paramsSerializer).replace(/^\?/, ''),
       method: config.method.toUpperCase(),
       headers: headers,
@@ -97,13 +104,13 @@ const httpadapter = (config: any) =>
       options.port = parsed.port;
     }
 
-    let proxy = config.proxy;
+    let proxy: ProxyConfig | false | undefined = config.proxy;
     if (!proxy && proxy !== false) {
-      let proxyEnv = protocol.slice(0, -1) + '_proxy';
-      let proxyUrl = process.env[proxyEnv] || process.env[proxyEnv.toUpperCase()];
+      const proxyEnv = protocol.slice(0, -1) + '_proxy';
+      const proxyUrl = process.env[proxyEnv] || process.env[proxyEnv.toUpperCase()];
       if (proxyUrl) {
-        let parsedProxyUrl = url.parse(proxyUrl);
-        let noProxyEnv = process.env.no_proxy || process.env.NO_PROXY;
+        const { hostname, port, auth } = url.parse(proxyUrl);
+        const noProxyEnv = process.env.no_proxy || process.env.NO_PROXY;
         let shouldProxy = true;
 
         if (noProxyEnv) {
@@ -131,14 +138,14 @@ const httpadapter = (config: any) =>
           });
         }
 
-        if (shouldProxy) {
+        if (shouldProxy && hostname && port) {
           proxy = {
-            host: parsedProxyUrl.hostname,
-            port: parsedProxyUrl.port
+            host: hostname,
+            port: parseInt(port, 10)
           };
 
-          if (parsedProxyUrl.auth) {
-            let proxyUrlAuth = parsedProxyUrl.auth.split(':');
+          if (auth) {
+            const proxyUrlAuth = auth.split(':');
             proxy.auth = {
               username: proxyUrlAuth[0],
               password: proxyUrlAuth[1]
@@ -157,13 +164,13 @@ const httpadapter = (config: any) =>
 
       // Basic proxy authorization
       if (proxy.auth) {
-        let base64 = Buffer.from(proxy.auth.username + ':' + proxy.auth.password, 'utf8').toString('base64');
+        const base64 = Buffer.from(proxy.auth.username + ':' + proxy.auth.password, 'utf8').toString('base64');
         options.headers['Proxy-Authorization'] = 'Basic ' + base64;
       }
     }
 
     let transport: { request: typeof import('http').request };
-    const isHttpsProxy = isHttpsRequest && (proxy ? isHttps.test(proxy.protocol) : true);
+    const isHttpsProxy = isHttpsRequest && (proxy ? isHttps.test(proxy.protocol || 'http') : true);
     if (config.transport) {
       transport = config.transport;
     } else if (config.maxRedirects === 0) {
@@ -180,7 +187,7 @@ const httpadapter = (config: any) =>
     }
 
     // Create the request
-    transportRequest = transport.request(options, function handleResponse(res) {
+    transportRequest = transport.request(options, res => {
       if (transportRequest.aborted) {
         //TODO: should it error?
         return;
@@ -201,9 +208,9 @@ const httpadapter = (config: any) =>
       }
 
       // return the last request in case of redirects
-      let lastRequest = (res as any).req || transportRequest;
+      const lastRequest = (res as any).req || transportRequest;
 
-      let response = {
+      const response = {
         status: res.statusCode || Number.NaN,
         statusText: res.statusMessage || '',
         headers: res.headers,
@@ -216,11 +223,15 @@ const httpadapter = (config: any) =>
         emitComplete(response);
       } else {
         const responseBuffer: Array<any> = [];
-        stream.on('data', function handleStreamData(chunk) {
+        stream.on('data', chunk => {
           responseBuffer.push(chunk);
 
           // make sure the content length is not over the maxContentLength if specified
-          if (config.maxContentLength > -1 && Buffer.concat(responseBuffer).length > config.maxContentLength) {
+          if (
+            !!config.maxContentLength &&
+            config.maxContentLength > -1 &&
+            Buffer.concat(responseBuffer).length > config.maxContentLength
+          ) {
             emitError(
               createError(
                 'maxContentLength size of ' + config.maxContentLength + ' exceeded',
@@ -232,14 +243,14 @@ const httpadapter = (config: any) =>
           }
         });
 
-        stream.on('error', function handleStreamError(err) {
+        stream.on('error', err => {
           if (transportRequest.aborted) {
             return;
           }
           emitError(enhanceError(err, config, null, lastRequest));
         });
 
-        stream.on('end', function handleStreamEnd() {
+        stream.on('end', () => {
           let responseData: any = Buffer.concat(responseBuffer);
           if (config.responseType !== 'arraybuffer') {
             responseData = responseData.toString(config.responseEncoding);
@@ -252,7 +263,7 @@ const httpadapter = (config: any) =>
     });
 
     // Handle errors
-    transportRequest.on('error', function handleRequestError(err) {
+    transportRequest.on('error', err => {
       if (transportRequest.aborted) {
         return;
       }

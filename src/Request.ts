@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 
 type Method = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch';
+type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream';
 
 interface BasicCredentials {
   username: string;
@@ -37,6 +38,7 @@ interface Requestconfig {
   adapter?: Adapter;
   auth?: BasicCredentials;
   responseType?: ResponseType;
+  responseEncoding?: string;
   xsrfCookieName?: string;
   xsrfHeaderName?: string;
   maxContentLength?: number;
@@ -46,6 +48,7 @@ interface Requestconfig {
   httpAgent?: any;
   httpsAgent?: any;
   proxy?: ProxyConfig | false;
+  transport?: { request: typeof import('http').request };
 }
 
-export { Method, Requestconfig, ProxyConfig, Adapter, Transformer, BasicCredentials };
+export { Method, ResponseType, Requestconfig, ProxyConfig, Adapter, Transformer, BasicCredentials };
