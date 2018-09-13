@@ -1,12 +1,18 @@
-pool:
-  vmImage: 'Ubuntu 16.04'
+jobs:
+- template: build.yml
+  parameters:
+    name: Linux
+    pool:
+      vmImage: 'Ubuntu 16.04'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '8.x'
+#- template: build.yml
+#  parameters:
+#    name: macOS
+#    pool:
+#      vmImage: 'macOS 10.13'
 
-- script: |
-    npm install
-    npm run lint
-    npm test
+#- template: build.yml
+#  parameters:
+#    name: Windows
+#    pool:
+#      vmImage: 'vs2017-win2016'
