@@ -1,5 +1,5 @@
 import { defaultOptions } from '../defaultOptions';
-import { Requestconfig, Transformer } from '../Request';
+import { RequestConfig, Transformer } from '../Request';
 import { combineURLs, isAbsoluteURL } from '../utils/urls';
 
 import { of } from 'rxjs';
@@ -31,9 +31,9 @@ const transformData = (
 /**
  * Dispatch a request to the server using the configured adapter.
  *
- * @param {Requestconfig} config The config that is to be used for the request
+ * @param {RequestConfig} config The config that is to be used for the request
  */
-const dispatchRequest = <T extends object | string = any>(config: Requestconfig) => {
+const dispatchRequest = <T extends object | string = any>(config: RequestConfig) => {
   if (!config.url || !config.method) {
     throw new Error('Invalid request configuration');
   }

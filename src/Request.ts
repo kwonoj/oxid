@@ -17,14 +17,14 @@ interface ProxyConfig {
 }
 
 interface Adapter {
-  <T = any>(config: Requestconfig): Observable<OxidResponse<T>>;
+  <T = any>(config: RequestConfig): Observable<OxidResponse<T>>;
 }
 
 interface Transformer {
   (data: object | string, headers?: Array<Record<string, any>>): object | string;
 }
 
-interface Requestconfig {
+interface RequestConfig {
   url?: string;
   method?: Method;
   baseURL?: string;
@@ -51,4 +51,4 @@ interface Requestconfig {
   transport?: { request: typeof import('http').request };
 }
 
-export { Method, ResponseType, Requestconfig, ProxyConfig, Adapter, Transformer, BasicCredentials };
+export { Method, ResponseType, RequestConfig, ProxyConfig, Adapter, Transformer, BasicCredentials };
