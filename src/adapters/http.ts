@@ -9,7 +9,7 @@ import * as zlib from 'zlib';
 import { isString } from 'util';
 import { oxidVersion } from '../metadata';
 import { ProxyConfig, RequestConfigNode } from '../Request';
-import { HttpEvent, HttpResponse } from '../Response';
+import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
@@ -270,12 +270,13 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
       emitError(enhanceError(err, config, null, transportRequest));
     });
 
-    // Send the request
+    // Fire the request, and notify the event stream that it was fired.
     if (isStream(data)) {
       data.on('error', err => emitError(enhanceError(err, config, null, transportRequest))).pipe(transportRequest);
     } else {
       transportRequest.end(data);
     }
+    observer.next({ type: HttpEventType.Sent });
 
     return tearDown;
   });

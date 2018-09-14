@@ -76,6 +76,7 @@ interface HttpResponse<T = any> {
  *
  */
 type HttpHeaderResponse = Pick<HttpResponse<any>, Exclude<keyof HttpResponse<any>, 'type' | 'data'>> & {
+  url: string;
   type: HttpEventType.ResponseHeader;
 };
 
