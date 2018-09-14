@@ -24,7 +24,7 @@ interface Transformer {
   (data: object | string, headers?: Array<Record<string, any>>): object | string;
 }
 
-interface RequestConfig {
+interface RequestConfigBase {
   url?: string;
   method?: Method;
   baseURL?: string;
@@ -34,7 +34,6 @@ interface RequestConfig {
   params?: any;
   paramsSerializer?: (params: any) => string;
   data?: any;
-  withCredentials?: boolean;
   adapter?: Adapter;
   auth?: BasicCredentials;
   responseType?: ResponseType;
@@ -45,6 +44,11 @@ interface RequestConfig {
   validateStatus?: (status: number) => boolean;
   maxRedirects?: number;
   socketPath?: string | null;
+
+  proxy?: ProxyConfig | false;
+}
+
+interface RequestConfigNode extends RequestConfigBase {
   /**
    * Custom agent to be used in node http request.
    */
@@ -53,12 +57,30 @@ interface RequestConfig {
    * Custom agent to be used in node https request.
    */
   httpsAgent?: any;
-  proxy?: ProxyConfig | false;
   transport?: { request: typeof import('http').request };
+}
+
+interface RequestConfigBrowser extends RequestConfigBase {
   /**
    * Emit progress event for xhr request.
    */
   reportProgress?: boolean;
+  withCredentials?: boolean;
 }
 
-export { Method, ResponseType, RequestConfig, ProxyConfig, Adapter, Transformer, BasicCredentials };
+/**
+ * Union type of RequestConfig for node / browser.
+ */
+type RequestConfig = RequestConfigNode | RequestConfigBrowser;
+
+export {
+  Method,
+  ResponseType,
+  RequestConfigNode,
+  RequestConfigBrowser,
+  RequestConfig,
+  ProxyConfig,
+  Adapter,
+  Transformer,
+  BasicCredentials
+};
