@@ -16,12 +16,8 @@ const setContentTypeIfUnset = (headers: Record<string, any> | undefined, value: 
   }
 };
 
-const getDefaultAdapter = (): Adapter =>
-  isNode()
-    ? require('./adapters/http').adapter //tslint:disable-line:no-require-imports
-    : (() => {
-        throw new Error('not implemented');
-      })();
+//tslint:disable-next-line:no-require-imports
+const getDefaultAdapter = (): Adapter => (isNode() ? require('./adapters/http') : require('./adapters/xhr')).adapter;
 
 /**
  * Default configuration values.
