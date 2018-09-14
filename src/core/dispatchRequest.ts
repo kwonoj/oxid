@@ -2,7 +2,7 @@ import { defaultOptions } from '../defaultOptions';
 import { RequestConfig, Transformer } from '../Request';
 import { combineURLs, isAbsoluteURL } from '../utils/urls';
 
-import { of } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { OxidResponse } from '../Response';
 
@@ -33,7 +33,7 @@ const transformData = (
  *
  * @param {RequestConfig} config The config that is to be used for the request
  */
-const dispatchRequest = <T extends object | string = any>(config: RequestConfig) => {
+const dispatchRequest = <T extends object | string = any>(config: RequestConfig): Observable<OxidResponse<T>> => {
   if (!config.url || !config.method) {
     throw new Error('Invalid request configuration');
   }
@@ -69,7 +69,7 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
       return {
         ...response,
         data: transformData(data, headers, config.transformResponse)
-      };
+      } as OxidResponse<T>;
     }),
     catchError((err: { response?: OxidResponse<T> }) => {
       //object can be typeof Error, do not clone via spread but apply transform to mutate
@@ -77,7 +77,7 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
         const { data, headers } = err.response;
         err.response.data = transformData(data, headers, config.transformResponse) as T;
       }
-      return of(err);
+      return throwError(err);
     })
   );
 };
