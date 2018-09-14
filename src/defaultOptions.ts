@@ -1,6 +1,6 @@
 import * as isBuffer from 'is-buffer';
 
-import { Adapter } from './Request';
+import { Adapter, RequestConfig } from './Request';
 import { isArrayBuffer, isBlob, isFile, isFormData, isNode, isObject, isStream, isURLSearchParams } from './utils/base';
 import { normalizeHeaderName } from './utils/normalizeHeaderName';
 
@@ -21,11 +21,14 @@ const getDefaultAdapter = (): Adapter =>
         throw new Error('not implemented');
       })();
 
-const defaultOptions = {
+/**
+ * Default configuration values.
+ */
+const defaultOptions: Readonly<RequestConfig> = {
   adapter: getDefaultAdapter(),
 
   transformRequest: [
-    (data: any, headers: Record<string, any>) => {
+    (data: object | string, headers?: Array<Record<string, any>>) => {
       normalizeHeaderName(headers, 'Accept');
       normalizeHeaderName(headers, 'Content-Type');
 
