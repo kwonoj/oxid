@@ -2,7 +2,7 @@ import { Oxid } from './core/oxid';
 import { defaultOptions } from './defaultOptions';
 import { RequestConfig } from './Request';
 
-export { Oxid } from './core/oxid';
+export * from './core/oxid';
 export * from './defaultOptions';
 export * from './Request';
 export * from './Response';

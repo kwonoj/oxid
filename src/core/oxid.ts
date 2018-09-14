@@ -24,15 +24,18 @@ const buildConfig = (urlOrConfig: RequestConfig | string, config?: RequestConfig
   };
 };
 
-class Oxid {
-  public readonly delete: (url: string, config: RequestConfig) => void;
-  public readonly get: (url: string, config: RequestConfig) => void;
-  public readonly head: (url: string, config: RequestConfig) => void;
-  public readonly options: (url: string, config: RequestConfig) => void;
+type requestMethodType = <T>(url: string, config?: RequestConfig) => Observable<OxidResponse<T>>;
+type requestMethodWithDataType = <T, U>(url: string, data?: T, config?: RequestConfig) => Observable<OxidResponse<U>>;
 
-  public readonly post: <T>(url: string, data: T, config: RequestConfig) => void;
-  public readonly put: <T>(url: string, data: T, config: RequestConfig) => void;
-  public readonly patch: <T>(url: string, data: T, config: RequestConfig) => void;
+class Oxid {
+  public readonly delete: requestMethodType;
+  public readonly get: requestMethodType;
+  public readonly head: requestMethodType;
+  public readonly options: requestMethodType;
+
+  public readonly post: requestMethodWithDataType;
+  public readonly put: requestMethodWithDataType;
+  public readonly patch: requestMethodWithDataType;
 
   public readonly interceptors: {
     request: Array<{ next: (config: RequestConfig) => RequestConfig; error: (err: any) => any }>;
@@ -99,4 +102,4 @@ class Oxid {
   }
 }
 
-export { Oxid };
+export { Oxid, requestMethodType, requestMethodWithDataType };
