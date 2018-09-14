@@ -24,5 +24,9 @@ describe('dispatchRequest', () => {
 
       expect(data).toEqual(out);
     });
+
+    it('should not throw if no data provided', () => {
+      expect(() => transformData(null as any, null as any)).not.toThrow();
+    });
   });
 });

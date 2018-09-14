@@ -4,7 +4,7 @@ import { combineURLs, isAbsoluteURL } from '../utils/urls';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { OxidResponse } from '../Response';
+import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
 
 /**
  * @internal
@@ -33,7 +33,7 @@ const transformData = (
  *
  * @param {RequestConfig} config The config that is to be used for the request
  */
-const dispatchRequest = <T extends object | string = any>(config: RequestConfig): Observable<OxidResponse<T>> => {
+const dispatchRequest = <T extends object | string = any>(config: RequestConfig): Observable<HttpEvent<T>> => {
   if (!config.url || !config.method) {
     throw new Error('Invalid request configuration');
   }
@@ -64,16 +64,22 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
 
   return adapter<T>(config).pipe(
     map(response => {
+      //Do not apply transform for non full response event
+      if (response.type !== HttpEventType.Response) {
+        return response;
+      }
+
       const { data, headers } = response;
       // Transform response data
       return {
         ...response,
         data: transformData(data, headers, config.transformResponse)
-      } as OxidResponse<T>;
+      } as HttpResponse<T>;
     }),
-    catchError((err: { response?: OxidResponse<T> }) => {
+    catchError((err: { response?: HttpEvent<T> }) => {
       //object can be typeof Error, do not clone via spread but apply transform to mutate
-      if (!!err && !!err.response) {
+      //only apply response contains data
+      if (!!err && !!err.response && err.response.type === HttpEventType.Response) {
         const { data, headers } = err.response;
         err.response.data = transformData(data, headers, config.transformResponse) as T;
       }
