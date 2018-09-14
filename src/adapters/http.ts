@@ -17,7 +17,7 @@ import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
 
-const httpadapter = <T = any>(config: RequestConfig) =>
+const httpAdapter = <T = any>(config: RequestConfig) =>
   //TODO: Observable type need to be defined
   //TODO: enhance check around !
   new Observable((observer: Observer<OxidResponse<T>>) => {
@@ -280,4 +280,4 @@ const httpadapter = <T = any>(config: RequestConfig) =>
     return tearDown;
   });
 
-export { httpadapter as adapter };
+export { httpAdapter as adapter };
