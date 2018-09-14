@@ -9,7 +9,7 @@ import * as zlib from 'zlib';
 import { isString } from 'util';
 import { oxidVersion } from '../metadata';
 import { ProxyConfig, RequestConfig } from '../Request';
-import { OxidResponse } from '../Response';
+import { HttpEvent, HttpResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
@@ -17,10 +17,10 @@ import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
 
-const httpadapter = <T = any>(config: RequestConfig) =>
+const httpAdapter = <T = any>(config: RequestConfig) =>
   //TODO: Observable type need to be defined
   //TODO: enhance check around !
-  new Observable((observer: Observer<OxidResponse<T>>) => {
+  new Observable((observer: Observer<HttpEvent<T>>) => {
     const { emitError, emitComplete } = getObserverHandler(observer);
     let transportRequest: http.ClientRequest;
 
@@ -216,7 +216,7 @@ const httpadapter = <T = any>(config: RequestConfig) =>
         headers: res.headers,
         config: config,
         request: lastRequest
-      } as OxidResponse<any>;
+      } as HttpResponse<any>;
 
       if (config.responseType === 'stream') {
         response.data = stream;
@@ -280,4 +280,4 @@ const httpadapter = <T = any>(config: RequestConfig) =>
     return tearDown;
   });
 
-export { httpadapter as adapter };
+export { httpAdapter as adapter };

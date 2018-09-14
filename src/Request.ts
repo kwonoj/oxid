@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { OxidResponse } from './Response';
+import { HttpEvent } from './Response';
 
 type Method = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch';
 type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream';
@@ -17,7 +17,7 @@ interface ProxyConfig {
 }
 
 interface Adapter {
-  <T = any>(config: RequestConfig): Observable<OxidResponse<T>>;
+  <T = any>(config: RequestConfig): Observable<HttpEvent<T>>;
 }
 
 interface Transformer {
@@ -45,10 +45,20 @@ interface RequestConfig {
   validateStatus?: (status: number) => boolean;
   maxRedirects?: number;
   socketPath?: string | null;
+  /**
+   * Custom agent to be used in node http request.
+   */
   httpAgent?: any;
+  /**
+   * Custom agent to be used in node https request.
+   */
   httpsAgent?: any;
   proxy?: ProxyConfig | false;
   transport?: { request: typeof import('http').request };
+  /**
+   * Emit progress event for xhr request.
+   */
+  reportProgress?: boolean;
 }
 
 export { Method, ResponseType, RequestConfig, ProxyConfig, Adapter, Transformer, BasicCredentials };

@@ -1,7 +1,7 @@
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { RequestConfig } from '../Request';
-import { OxidResponse } from '../Response';
+import { HttpEvent } from '../Response';
 import { isString } from '../utils/base';
 import { buildURL } from '../utils/urls';
 import { dispatchRequest } from './dispatchRequest';
@@ -24,8 +24,8 @@ const buildConfig = (urlOrConfig: RequestConfig | string, config?: RequestConfig
   };
 };
 
-type requestMethodType = <T>(url: string, config?: RequestConfig) => Observable<OxidResponse<T>>;
-type requestMethodWithDataType = <T, U>(url: string, data?: T, config?: RequestConfig) => Observable<OxidResponse<U>>;
+type requestMethodType = <T>(url: string, config?: RequestConfig) => Observable<HttpEvent<T>>;
+type requestMethodWithDataType = <T, U>(url: string, data?: T, config?: RequestConfig) => Observable<HttpEvent<U>>;
 
 class Oxid {
   public readonly delete: requestMethodType;
@@ -39,7 +39,7 @@ class Oxid {
 
   public readonly interceptors: {
     request: Array<{ next: (config: RequestConfig) => RequestConfig; error: (err: any) => any }>;
-    response: Array<{ next: <T = any, U = T>(response: OxidResponse<T>) => OxidResponse<U>; error: (err: any) => any }>;
+    response: Array<{ next: <T = any, U = T>(response: HttpEvent<T>) => HttpEvent<U>; error: (err: any) => any }>;
   } = {
     request: [],
     response: []
@@ -57,13 +57,13 @@ class Oxid {
     );
   }
 
-  public request<T extends object | string = any>(url: string, config?: RequestConfig): Observable<OxidResponse<T>>;
-  public request<T extends object | string = any>(url: string): Observable<OxidResponse<T>>;
-  public request<T extends object | string = any>(config: RequestConfig): Observable<OxidResponse<T>>;
+  public request<T extends object | string = any>(url: string, config?: RequestConfig): Observable<HttpEvent<T>>;
+  public request<T extends object | string = any>(url: string): Observable<HttpEvent<T>>;
+  public request<T extends object | string = any>(config: RequestConfig): Observable<HttpEvent<T>>;
   public request<T extends object | string = any>(
     urlOrConfig: RequestConfig | string,
     config?: RequestConfig
-  ): Observable<OxidResponse<T>> {
+  ): Observable<HttpEvent<T>> {
     const mergedConfig: RequestConfig = {
       ...this.baseConfig,
       ...buildConfig(urlOrConfig, config)

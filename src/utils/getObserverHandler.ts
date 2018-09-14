@@ -1,10 +1,19 @@
 import { Observer } from 'rxjs';
-import { OxidResponse } from '../Response';
+import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
 import { createError } from './createError';
 
 const getObserverHandler = (observer: Observer<any>) => {
   let handled = false;
   return {
+    /**
+     * Emit next httpEvent, unlike `emitComplete`, this neither verify status nor completes.
+     */
+    emitNext: <T = any>(response: HttpEvent<T>) => {
+      if (handled) {
+        return;
+      }
+      observer.next(response);
+    },
     emitError: (err: any) => {
       if (handled) {
         return;
@@ -12,7 +21,6 @@ const getObserverHandler = (observer: Observer<any>) => {
       handled = true;
       observer.error(err);
     },
-
     /**
      * Error or next response based on status. Once response emitted via next,
      * it'll complete as well.
@@ -20,7 +28,7 @@ const getObserverHandler = (observer: Observer<any>) => {
      * @param observer
      * @param response
      */
-    emitComplete: <T = any>(response: OxidResponse<T>) => {
+    emitComplete: <T = any>(response: HttpResponse<T>) => {
       if (handled) {
         return;
       }
@@ -28,7 +36,10 @@ const getObserverHandler = (observer: Observer<any>) => {
       const validateStatus = response.config.validateStatus;
 
       if (!validateStatus || validateStatus(response.status)) {
-        observer.next(response);
+        observer.next({
+          ...response,
+          type: HttpEventType.Response
+        });
         observer.complete();
       } else {
         observer.error(
