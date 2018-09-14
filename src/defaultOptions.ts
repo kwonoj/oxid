@@ -4,6 +4,8 @@ import { Adapter, RequestConfig } from './Request';
 import { isArrayBuffer, isBlob, isFile, isFormData, isNode, isObject, isStream, isURLSearchParams } from './utils/base';
 import { normalizeHeaderName } from './utils/normalizeHeaderName';
 
+const XSRF_HEADER_NAME = 'X-XSRF-TOKEN';
+
 const DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
 };
@@ -64,7 +66,7 @@ const defaultOptions: Readonly<RequestConfig> = {
   ],
 
   xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
+  xsrfHeaderName: XSRF_HEADER_NAME,
 
   maxContentLength: -1,
 
@@ -86,4 +88,4 @@ const defaultOptions: Readonly<RequestConfig> = {
   };
 });
 
-export { defaultOptions };
+export { defaultOptions, XSRF_HEADER_NAME };
