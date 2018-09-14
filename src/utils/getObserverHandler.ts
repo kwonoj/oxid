@@ -1,19 +1,10 @@
 import { Observer } from 'rxjs';
-import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
+import { HttpEventType, HttpResponse } from '../Response';
 import { createError } from './createError';
 
 const getObserverHandler = (observer: Observer<any>) => {
   let handled = false;
   return {
-    /**
-     * Emit next httpEvent, unlike `emitComplete`, this neither verify status nor completes.
-     */
-    emitNext: <T = any>(response: HttpEvent<T>) => {
-      if (handled) {
-        return;
-      }
-      observer.next(response);
-    },
     emitError: (err: any) => {
       if (handled) {
         return;
