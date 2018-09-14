@@ -60,7 +60,7 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
 
   ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'].forEach(method => delete config.headers[method]);
 
-  const adapter = config.adapter || defaultOptions.adapter;
+  const adapter = config.adapter || defaultOptions.adapter!;
 
   return adapter<T>(config).pipe(
     map(response => {

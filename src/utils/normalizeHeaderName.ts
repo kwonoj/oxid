@@ -4,7 +4,7 @@
  * @param headers
  * @param normalizedName
  */
-const normalizeHeaderName = (headers: Record<string, any>, normalizedName: string) => {
+const normalizeHeaderName = (headers: Record<string, any> | undefined, normalizedName: string) => {
   if (!headers) {
     return;
   }
