@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { describeOnly } from '../__fixture__/testHelper';
+import { describeOnly } from '../__fixtures__/testHelper';
 
 import { cookies } from '../../src/utils/cookies';
 

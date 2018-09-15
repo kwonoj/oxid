@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { itOnly } from '../__fixture__/testHelper';
+import { itOnly } from '../__fixtures__/testHelper';
 
 import 'url-search-params-polyfill';
 import { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin } from '../../src/utils/urls';

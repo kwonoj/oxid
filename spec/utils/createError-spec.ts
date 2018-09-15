@@ -1,4 +1,4 @@
-import { expect } from '../__fixture__/testHelper';
+import { expect } from '../__fixtures__/testHelper';
 
 import { createError, enhanceError } from '../../src/utils/createError';
 
