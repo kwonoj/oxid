@@ -15,6 +15,7 @@ import { createError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
 import { parseHeaders } from '../utils/parseHeaders';
 import { buildURL, isURLSameOrigin } from '../utils/urls';
+import { xhrBackend } from './xhrBackend';
 
 const XSSI_PREFIX = /^\)\]\}',?\n/;
 
@@ -37,7 +38,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     const { reportProgress, withCredentials } = config;
     const { emitError, emitComplete } = getObserverHandler(observer);
     // Start by setting up the XHR object with request method, URL, and withCredentials flag.
-    const xhr = new XMLHttpRequest();
+    const xhr = xhrBackend();
 
     // This is the return from the Observable function, which is the
     // request cancellation handler.
@@ -102,7 +103,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     }
 
     // Add headers to the request
-    if ('setRequestHeader' in xhr) {
+    if ('setRequestHeader' in xhr && !!requestHeaders) {
       ((Object as any).entries(requestHeaders) as Array<[string, string]>)
         .filter(
           ([key]) =>
