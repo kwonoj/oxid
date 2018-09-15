@@ -1,3 +1,5 @@
+import { expect } from 'chai';
+
 import { transformData } from '../../src/core/dispatchRequest';
 
 describe('dispatchRequest', () => {
@@ -8,25 +10,25 @@ describe('dispatchRequest', () => {
         return data;
       });
 
-      expect(data).toEqual('foo');
+      expect(data).to.equal('foo');
     });
 
     it('should support an array of transformers', () => {
       const transformerArray = [(data: any) => `${data}f`, (data: any) => `${data}o`, (data: any) => `${data}o`];
       const data = transformData('', null as any, transformerArray);
 
-      expect(data).toEqual('foo');
+      expect(data).to.equal('foo');
     });
 
     it('should not transform if no functions provided', () => {
       const data = 'boo';
       const out = transformData(data, null as any);
 
-      expect(data).toEqual(out);
+      expect(data).to.equal(out);
     });
 
     it('should not throw if no data provided', () => {
-      expect(() => transformData(null as any, null as any)).not.toThrow();
+      expect(() => transformData(null as any, null as any)).not.to.throw();
     });
   });
 });
