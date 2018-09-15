@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { itOnly } from '../__fixture__/testHelper';
 
-import URLSearchParams = require('url-search-params'); //tslint:disable-line:no-require-imports
+import 'url-search-params-polyfill';
 import { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin } from '../../src/utils/urls';
 
 describe('urls', () => {
