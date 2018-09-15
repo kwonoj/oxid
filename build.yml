@@ -23,3 +23,9 @@ jobs:
     displayName: Install package, build, run unit test
   - script: npm run lint
     displayName: Lint
+  - script: npm run build
+    displayName: Build
+  - script: npm run test:coverage
+    displayName: Unit test
+  - script: npm run test:karma
+    displayName: Unit test on headless browser

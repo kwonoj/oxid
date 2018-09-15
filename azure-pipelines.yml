@@ -16,3 +16,6 @@ jobs:
 #    name: Windows
 #    pool:
 #      vmImage: 'vs2017-win2016'
+
+# linux pool - node9 only for run headless, e2e, browser(saucelabs, etcs)
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=vsts#conditional-insertion
