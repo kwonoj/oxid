@@ -1,10 +1,14 @@
-import { URLSearchParams } from 'url';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { itOnly } from '../__fixture__/testHelper';
+
+import URLSearchParams = require('url-search-params'); //tslint:disable-line:no-require-imports
 import { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin } from '../../src/utils/urls';
 
 describe('urls', () => {
   describe('buildURL', () => {
     it('should support null params', () => {
-      expect(buildURL('/foo')).toEqual('/foo');
+      expect(buildURL('/foo')).to.equal('/foo');
     });
 
     it('should support params', () => {
@@ -12,7 +16,7 @@ describe('urls', () => {
         buildURL('/foo', {
           foo: 'bar'
         })
-      ).toEqual('/foo?foo=bar');
+      ).to.equal('/foo?foo=bar');
     });
 
     it('should support object params', () => {
@@ -22,7 +26,7 @@ describe('urls', () => {
             bar: 'baz'
           }
         })
-      ).toEqual('/foo?foo=' + encodeURI('{"bar":"baz"}'));
+      ).to.equal('/foo?foo=' + encodeURI('{"bar":"baz"}'));
     });
 
     it('should support date params', () => {
@@ -32,7 +36,7 @@ describe('urls', () => {
         buildURL('/foo', {
           date: date
         })
-      ).toEqual('/foo?date=' + date.toISOString());
+      ).to.equal('/foo?date=' + date.toISOString());
     });
 
     it('should support array params', () => {
@@ -40,7 +44,7 @@ describe('urls', () => {
         buildURL('/foo', {
           foo: ['bar', 'baz']
         })
-      ).toEqual('/foo?foo[]=bar&foo[]=baz');
+      ).to.equal('/foo?foo[]=bar&foo[]=baz');
     });
 
     it('should support special char params', () => {
@@ -48,7 +52,7 @@ describe('urls', () => {
         buildURL('/foo', {
           foo: '@:$, '
         })
-      ).toEqual('/foo?foo=@:$,+');
+      ).to.equal('/foo?foo=@:$,+');
     });
 
     it('should support existing params', () => {
@@ -56,7 +60,7 @@ describe('urls', () => {
         buildURL('/foo?foo=bar', {
           bar: 'baz'
         })
-      ).toEqual('/foo?foo=bar&bar=baz');
+      ).to.equal('/foo?foo=bar&bar=baz');
     });
 
     it('should support "length" parameter', () => {
@@ -66,7 +70,7 @@ describe('urls', () => {
           start: 0,
           length: 5
         })
-      ).toEqual('/foo?query=bar&start=0&length=5');
+      ).to.equal('/foo?query=bar&start=0&length=5');
     });
 
     it('should correct discard url hash mark', () => {
@@ -74,75 +78,77 @@ describe('urls', () => {
         buildURL('/foo?foo=bar#hash', {
           query: 'baz'
         })
-      ).toEqual('/foo?foo=bar&query=baz');
+      ).to.equal('/foo?foo=bar&query=baz');
     });
 
     it('should use serializer if provided', () => {
-      const serializer = jest.fn(() => 'foo=bar');
-      const params = { foo: 'bar' };
-      expect(buildURL('/foo', params, serializer)).toEqual('/foo?foo=bar');
+      const serializer = sinon.stub().returns('foo=bar');
 
-      expect(serializer.mock.calls).toHaveLength(1);
-      expect(serializer.mock.calls[0][0]).toEqual(params);
+      const params = { foo: 'bar' };
+      expect(buildURL('/foo', params, serializer)).to.equal('/foo?foo=bar');
+      expect(serializer.calledOnceWith(params)).to.be.true;
     });
 
     it('should support URLSearchParams', () => {
-      expect(buildURL('/foo', new URLSearchParams('bar=baz'))).toEqual('/foo?bar=baz');
+      expect(buildURL('/foo', new URLSearchParams('bar=baz'))).to.equal('/foo?bar=baz');
     });
   });
 
   describe('combineURLs', () => {
     it('should combine URLs', () => {
-      expect(combineURLs('https://api.github.com', '/users')).toBe('https://api.github.com/users');
+      expect(combineURLs('https://api.github.com', '/users')).to.equal('https://api.github.com/users');
     });
 
     it('should remove duplicate slashes', () => {
-      expect(combineURLs('https://api.github.com/', '/users')).toBe('https://api.github.com/users');
+      expect(combineURLs('https://api.github.com/', '/users')).to.equal('https://api.github.com/users');
     });
 
     it('should insert missing slash', () => {
-      expect(combineURLs('https://api.github.com', 'users')).toBe('https://api.github.com/users');
+      expect(combineURLs('https://api.github.com', 'users')).to.equal('https://api.github.com/users');
     });
 
     it('should not insert slash when relative url missing/empty', () => {
-      expect(combineURLs('https://api.github.com/users', '')).toBe('https://api.github.com/users');
+      expect(combineURLs('https://api.github.com/users', '')).to.equal('https://api.github.com/users');
     });
 
     it('should allow a single slash for relative url', () => {
-      expect(combineURLs('https://api.github.com/users', '/')).toBe('https://api.github.com/users/');
+      expect(combineURLs('https://api.github.com/users', '/')).to.equal('https://api.github.com/users/');
     });
   });
 
   describe('isAbsoluteURL', () => {
     it('should return true if URL begins with valid scheme name', () => {
-      expect(isAbsoluteURL('https://api.github.com/users')).toBe(true);
-      expect(isAbsoluteURL('custom-scheme-v1.0://example.com/')).toBe(true);
-      expect(isAbsoluteURL('HTTP://example.com/')).toBe(true);
+      expect(isAbsoluteURL('https://api.github.com/users')).to.be.true;
+      expect(isAbsoluteURL('custom-scheme-v1.0://example.com/')).to.be.true;
+      expect(isAbsoluteURL('HTTP://example.com/')).to.be.true;
     });
 
     it('should return false if URL begins with invalid scheme name', () => {
-      expect(isAbsoluteURL('123://example.com/')).toBe(false);
-      expect(isAbsoluteURL('!valid://example.com/')).toBe(false);
+      expect(isAbsoluteURL('123://example.com/')).to.be.false;
+      expect(isAbsoluteURL('!valid://example.com/')).to.be.false;
     });
 
     it('should return true if URL is protocol-relative', () => {
-      expect(isAbsoluteURL('//example.com/')).toBe(true);
+      expect(isAbsoluteURL('//example.com/')).to.be.true;
     });
 
     it('should return false if URL is relative', () => {
-      expect(isAbsoluteURL('/foo')).toBe(false);
-      expect(isAbsoluteURL('foo')).toBe(false);
+      expect(isAbsoluteURL('/foo')).to.be.false;
+      expect(isAbsoluteURL('foo')).to.be.false;
     });
   });
 
-  // NOTE: this test passes via jsdom on node.js
-  describe('isURLSameOrigin', function() {
-    it('should detect same origin', function() {
-      expect(isURLSameOrigin(window.location.href)).toEqual(true);
+  describe('isURLSameOrigin', () => {
+    itOnly.browser('should detect same origin', () => {
+      expect(isURLSameOrigin(window.location.href)).to.equal(true);
     });
 
-    it('should detect different origin', function() {
-      expect(isURLSameOrigin('https://github.com/kwonoj/oxid')).toEqual(false);
+    itOnly.browser('should detect different origin', () => {
+      expect(isURLSameOrigin('https://github.com/kwonoj/oxid')).to.equal(false);
+    });
+
+    itOnly.node('should return true always', () => {
+      expect(isURLSameOrigin(null as any)).to.be.true;
     });
   });
 });

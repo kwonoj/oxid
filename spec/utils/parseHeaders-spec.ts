@@ -1,3 +1,5 @@
+import { expect } from 'chai';
+
 import { parseHeaders } from '../../src/utils/parseHeaders';
 
 describe('parseHeaders', () => {
@@ -13,10 +15,10 @@ describe('parseHeaders', () => {
         'Transfer-Encoding: chunked'
     );
 
-    expect(parsed['date']).toEqual(date.toISOString());
-    expect(parsed['content-type']).toEqual('application/json');
-    expect(parsed['connection']).toEqual('keep-alive');
-    expect(parsed['transfer-encoding']).toEqual('chunked');
+    expect(parsed['date']).to.equal(date.toISOString());
+    expect(parsed['content-type']).to.equal('application/json');
+    expect(parsed['connection']).to.equal('keep-alive');
+    expect(parsed['transfer-encoding']).to.equal('chunked');
   });
 
   it('should use array for set-cookie', () => {
@@ -24,9 +26,9 @@ describe('parseHeaders', () => {
     const parsedSingle = parseHeaders('Set-Cookie: key=val;');
     const parsedMulti = parseHeaders('Set-Cookie: key=val;\n' + 'Set-Cookie: key2=val2;\n');
 
-    expect(parsedZero['set-cookie']).toBeUndefined();
-    expect(parsedSingle['set-cookie']).toEqual(['key=val;']);
-    expect(parsedMulti['set-cookie']).toEqual(['key=val;', 'key2=val2;']);
+    expect(parsedZero['set-cookie']).to.be.undefined;
+    expect(parsedSingle['set-cookie']).to.deep.equal(['key=val;']);
+    expect(parsedMulti['set-cookie']).to.deep.equal(['key=val;', 'key2=val2;']);
   });
 
   it('should handle duplicates', () => {
@@ -37,7 +39,7 @@ describe('parseHeaders', () => {
         'Foo: foo-b\n'
     );
 
-    expect(parsed['age']).toEqual('age-a');
-    expect(parsed['foo']).toEqual('foo-a, foo-b');
+    expect(parsed['age']).to.equal('age-a');
+    expect(parsed['foo']).to.equal('foo-a, foo-b');
   });
 });

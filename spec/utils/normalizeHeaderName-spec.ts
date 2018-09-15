@@ -1,3 +1,5 @@
+import { expect } from 'chai';
+
 import { normalizeHeaderName } from '../../src/utils/normalizeHeaderName';
 
 describe('normalizeHeaderName', () => {
@@ -6,8 +8,8 @@ describe('normalizeHeaderName', () => {
       'conTenT-Type': 'foo/bar'
     };
     normalizeHeaderName(headers, 'Content-Type');
-    expect(headers['Content-Type']).toBe('foo/bar');
-    expect(headers['conTenT-Type']).toBeUndefined();
+    expect(headers['Content-Type']).to.equal('foo/bar');
+    expect(headers['conTenT-Type']).to.be.undefined;
   });
 
   it('should not change non-matching header name', () => {
@@ -15,7 +17,7 @@ describe('normalizeHeaderName', () => {
       'content-type': 'foo/bar'
     };
     normalizeHeaderName(headers, 'Content-Length');
-    expect(headers['content-type']).toBe('foo/bar');
-    expect(headers['Content-Length']).toBeUndefined();
+    expect(headers['content-type']).to.equal('foo/bar');
+    expect(headers['Content-Length']).to.be.undefined;
   });
 });

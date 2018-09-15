@@ -1,24 +1,26 @@
+import { expect } from 'chai';
+
 import { defaultOptions } from '../src/defaultOptions';
 
 //TODO: verify config value change via index import for oxid instance
 //(remaining tests in default.spec.js)
 describe('defaultOptions', () => {
   it('should transform request json', () => {
-    expect(defaultOptions.transformRequest![0]({ foo: 'bar' }, null as any)).toEqual('{"foo":"bar"}');
+    expect(defaultOptions.transformRequest![0]({ foo: 'bar' }, null as any)).to.equal('{"foo":"bar"}');
   });
 
   it('should do nothing to request string', () => {
-    expect(defaultOptions.transformRequest![0]('foo=bar', null as any)).toEqual('foo=bar');
+    expect(defaultOptions.transformRequest![0]('foo=bar', null as any)).to.equal('foo=bar');
   });
 
   it('should transform response json', () => {
     const data = defaultOptions.transformResponse![0]('{"foo":"bar"}');
 
-    expect(typeof data).toEqual('object');
-    expect(data.foo).toEqual('bar');
+    expect(typeof data).to.equal('object');
+    expect(data.foo).to.equal('bar');
   });
 
   it('should do nothing to response string', () => {
-    expect(defaultOptions.transformResponse![0]('foo=bar')).toEqual('foo=bar');
+    expect(defaultOptions.transformResponse![0]('foo=bar')).to.equal('foo=bar');
   });
 });

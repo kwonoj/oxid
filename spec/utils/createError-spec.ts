@@ -1,3 +1,5 @@
+import { expect } from '../__fixture__/testHelper';
+
 import { createError, enhanceError } from '../../src/utils/createError';
 
 describe('createError', () => {
@@ -6,8 +8,8 @@ describe('createError', () => {
     const response = { status: 200, data: { foo: 'bar' } };
     const error = createError('Boom!', { foo: 'bar' }, 'ESOMETHING', request, response);
 
-    expect(error).toBeInstanceOf(Error);
-    expect(error).toMatchObject({
+    expect(error).to.be.instanceof(Error);
+    expect(error).to.containSubset({
       message: 'Boom!',
       config: { foo: 'bar' },
       code: 'ESOMETHING',
@@ -24,7 +26,7 @@ describe('createError', () => {
     const error = createError('Boom!', { foo: 'bar' }, 'ESOMETHING', request, response);
     const json = error.toJSON();
 
-    expect(json).toMatchObject({
+    expect(json).to.containSubset({
       message: 'Boom!',
       config: { foo: 'bar' },
       code: 'ESOMETHING'
@@ -39,7 +41,7 @@ describe('enhanceError', () => {
     const response = { status: 200, data: { foo: 'bar' } };
 
     const error = enhanceError(originalError, { foo: 'bar' }, 'ESOMETHING', request, response);
-    expect(error).toMatchObject({
+    expect(error).to.containSubset({
       message: 'Boom!',
       config: { foo: 'bar' },
       code: 'ESOMETHING',
@@ -50,6 +52,6 @@ describe('enhanceError', () => {
 
   it('should return error', () => {
     const err = new Error('Boom!');
-    expect(enhanceError(err, { foo: 'bar' }, 'ESOMETHING')).toBe(err);
+    expect(enhanceError(err, { foo: 'bar' }, 'ESOMETHING')).to.equal(err);
   });
 });
