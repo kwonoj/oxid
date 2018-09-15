@@ -1,7 +1,7 @@
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { RequestConfig } from '../Request';
-import { HttpEvent } from '../Response';
+import { HttpErrorResponse, HttpEvent } from '../Response';
 import { isString } from '../utils/base';
 import { buildURL } from '../utils/urls';
 import { dispatchRequest } from './dispatchRequest';
@@ -38,8 +38,11 @@ class Oxid {
   public readonly patch: requestMethodWithDataType;
 
   public readonly interceptors: {
-    request: Array<{ next: (config: RequestConfig) => RequestConfig; error: (err: any) => any }>;
-    response: Array<{ next: <T = any, U = T>(response: HttpEvent<T>) => HttpEvent<U>; error: (err: any) => any }>;
+    request: Array<{ next: (config: RequestConfig) => RequestConfig; error: (err: HttpErrorResponse) => any }>;
+    response: Array<{
+      next: <T = any, U = T>(response: HttpEvent<T>) => HttpEvent<U>;
+      error: (err: HttpErrorResponse) => any;
+    }>;
   } = {
     request: [],
     response: []

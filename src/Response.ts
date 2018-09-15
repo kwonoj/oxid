@@ -1,4 +1,5 @@
 import { RequestConfig } from './Request';
+import { enhanceError } from './utils/createError';
 
 /**
  * Type enumeration for the different kinds of `HttpEvent`.
@@ -128,6 +129,8 @@ interface HttpUploadProgressEvent extends HttpProgressEvent {
   type: HttpEventType.UploadProgress;
 }
 
+type HttpErrorResponse = ReturnType<typeof enhanceError>;
+
 /**
  * Union type for all possible events on the response stream.
  *
@@ -145,5 +148,6 @@ export {
   HttpHeaderResponse,
   HttpUploadProgressEvent,
   HttpDownloadProgressEvent,
+  HttpErrorResponse,
   HttpEventType
 };

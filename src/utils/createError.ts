@@ -1,3 +1,5 @@
+import { RequestConfig } from '../Request';
+import { HttpResponse } from '../Response';
 import { pick } from './base';
 
 /**
@@ -18,10 +20,10 @@ const enhanceError = (
   response?: object
 ): Error &
   Partial<{
-    config: unknown;
+    config: RequestConfig;
     code: string;
-    request: unknown;
-    response: unknown;
+    request: any;
+    response: HttpResponse<any>;
   }> & { fromOxid: boolean; toJSON: () => Record<string, any> } => {
   error.config = config;
   if (code) {
