@@ -64,8 +64,12 @@ class MockXMLHttpRequest {
     return this.mockResponseHeaders;
   }
 
-  getResponseHeader(_header: string): string | null {
-    throw new Error('Not implemented');
+  getResponseHeader(header: string): string | null {
+    return this.mockResponseHeaders
+      .split(`\n`)
+      .map(x => x.split(':'))
+      .find(([h]) => h === header)![1]
+      .trim();
   }
 
   mockFlush(status: number, statusText: string, body?: string) {
@@ -105,6 +109,24 @@ class MockXMLHttpRequest {
 
   abort() {
     this.mockAborted = true;
+  }
+
+  clear() {
+    this.body = undefined;
+    this.method = undefined as any;
+    this.url = undefined as any;
+    this.mockHeaders = {};
+    this.mockAborted = false;
+    this.withCredentials = false;
+    this.responseType = 'text';
+    this.response = undefined;
+    this.responseText = undefined;
+    this.responseURL = null;
+    this.status = 0;
+    this.statusText = '';
+    this.mockResponseHeaders = '';
+    this.listeners = {};
+    this.upload = new MockXMLHttpRequestUpload(this);
   }
 }
 
