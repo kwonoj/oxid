@@ -28,7 +28,11 @@ module.exports = function(config) {
           }
         ]
       },
-      plugins: [new webpack.HotModuleReplacementPlugin()]
+      plugins: [
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        new (require('rewiremock/webpack/plugin'))()
+      ]
     },
     webpackMiddleware: {
       stats: 'errors-only'

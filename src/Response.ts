@@ -65,6 +65,10 @@ interface HttpResponse<T = any> {
   headers: any;
   config: RequestConfig;
   request?: any;
+  /**
+   *  response URL from the XMLHttpResponse instance and fall back on the request URL.
+   */
+  responseUrl?: string;
 }
 
 /**
