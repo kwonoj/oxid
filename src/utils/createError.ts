@@ -24,7 +24,7 @@ const enhanceError = (
     code: string;
     request: any;
     response: HttpResponse<any>;
-  }> & { fromOxid: boolean; toJSON: () => Record<string, any> } => {
+  }> & { toJSON: () => Record<string, any> } => {
   error.config = config;
   if (code) {
     error.code = code;
