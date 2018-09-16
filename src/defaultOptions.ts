@@ -28,6 +28,12 @@ const setContentTypeIfUnset = (headers: Record<string, any> | undefined, value: 
 const getDefaultAdapter = (): Adapter => (isNode() ? require('./adapters/http') : require('./adapters/xhr')).adapter;
 
 /**
+ * Default validator
+ *
+ */
+const validateStatus = (status: number) => status >= 200 && status < 300;
+
+/**
  * Default configuration values.
  */
 const defaultOptions: Readonly<RequestConfig> = {
@@ -74,7 +80,7 @@ const defaultOptions: Readonly<RequestConfig> = {
 
   maxContentLength: -1,
 
-  validateStatus: (status: number) => status >= 200 && status < 300,
+  validateStatus,
 
   headers: {
     common: {
@@ -92,4 +98,4 @@ const defaultOptions: Readonly<RequestConfig> = {
   };
 });
 
-export { defaultOptions };
+export { defaultOptions, validateStatus };
