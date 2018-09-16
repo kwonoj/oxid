@@ -153,8 +153,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         return headerResponse;
       }
 
-      // Read status and normalize an IE9 bug (http://bugs.jquery.com/ticket/1450).
-      const status: number = xhr.status === 1223 ? 204 : xhr.status;
+      const status: number = xhr.status;
       const statusText = xhr.statusText || 'OK';
 
       // Parse headers from XMLHttpRequest
@@ -165,7 +164,8 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       const url = getResponseUrl(xhr) || config.url;
 
       // Construct the HttpHeaderResponse and memoize it.
-      return { headers, status, statusText, url: url!, config, type: HttpEventType.ResponseHeader };
+      headerResponse = { headers, status, statusText, url: url!, config, type: HttpEventType.ResponseHeader };
+      return headerResponse;
     };
 
     // Next, a few closures are defined for the various events which XMLHttpRequest can
@@ -173,7 +173,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     // First up is the load event, which represents a response being fully available.
     const onLoad = () => {
       // Read response state from the memoized partial data.
-      let { headers, status, statusText } = partialFromXhr();
+      let { headers, status, statusText, url } = partialFromXhr();
 
       // The body will be read out if present.
       let body: any | null = null;
@@ -224,12 +224,13 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       const responseData = !config.responseType || config.responseType === 'text' ? xhr.responseText : xhr.response;
       const response: HttpResponse<any> = {
         type: HttpEventType.Response,
-        data: body || responseData,
-        status: xhr.status,
+        data: body || responseData || null,
+        status: status || xhr.status,
         statusText: statusText,
         headers,
         config,
-        request: xhr
+        request: xhr,
+        responseUrl: url
       };
 
       // The full body has been received and delivered, no further events
@@ -243,7 +244,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     const onError = (_error: ErrorEvent) => {
       // Request that using file: protocol, most browsers
       // will return status as 0 even though it's a successful request
-      if (xhr.status === 0 && !(xhr.responseURL && xhr.responseURL.indexOf('file:') === 0)) {
+      if (xhr.status === 0 && !!xhr.responseURL && xhr.responseURL.indexOf('file:') === 0) {
         return;
       }
       emitError(createError(xhr.statusText || 'Network Error', config, null, xhr));
