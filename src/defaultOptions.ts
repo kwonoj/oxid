@@ -1,10 +1,18 @@
 import * as isBuffer from 'is-buffer';
 
 import { Adapter, RequestConfig } from './Request';
-import { isArrayBuffer, isBlob, isFile, isFormData, isNode, isObject, isStream, isURLSearchParams } from './utils/base';
+import {
+  isArrayBuffer,
+  isBlob,
+  isFile,
+  isFormData,
+  isNode,
+  isObject,
+  isStream,
+  isURLSearchParams,
+  XSRF_HEADER_NAME
+} from './utils/base';
 import { normalizeHeaderName } from './utils/normalizeHeaderName';
-
-const XSRF_HEADER_NAME = 'X-XSRF-TOKEN';
 
 const DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -84,4 +92,4 @@ const defaultOptions: Readonly<RequestConfig> = {
   };
 });
 
-export { defaultOptions, XSRF_HEADER_NAME };
+export { defaultOptions };

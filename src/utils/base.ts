@@ -152,6 +152,8 @@ const pick = (value: Record<string, any>, ...props: Array<string>) =>
     return acc;
   }, {});
 
+const XSRF_HEADER_NAME = 'X-XSRF-TOKEN';
+
 export {
   isNode,
   isFormData,
@@ -165,5 +167,6 @@ export {
   isDate,
   isURLSearchParams,
   isStandardBrowserEnv,
+  XSRF_HEADER_NAME,
   pick
 };

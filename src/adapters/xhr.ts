@@ -1,6 +1,5 @@
 import { Observable, Observer } from 'rxjs';
 import { isUndefined } from 'util';
-import { XSRF_HEADER_NAME } from '../defaultOptions';
 import { RequestConfigBrowser } from '../Request';
 import {
   HttpDownloadProgressEvent,
@@ -10,7 +9,7 @@ import {
   HttpResponse,
   HttpUploadProgressEvent
 } from '../Response';
-import { isFormData, isStandardBrowserEnv } from '../utils/base';
+import { isFormData, isStandardBrowserEnv, XSRF_HEADER_NAME } from '../utils/base';
 import { cookies } from '../utils/cookies';
 import { createError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';

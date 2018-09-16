@@ -21,7 +21,7 @@ jobs:
     displayName: Update npm
   - script: npm ci
     displayName: Install package, build, run unit test
-  - script: npm run lint
+  - script: npm run lint:code && npm run lint:circular
     displayName: Lint
   - script: npm run build
     displayName: Build
