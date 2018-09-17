@@ -20,7 +20,8 @@ const buildConfig = (urlOrConfig: RequestConfig | string, config?: RequestConfig
 
   return {
     ...baseConfig,
-    url: baseConfig.url ? baseConfig.url.toLowerCase() : 'get'
+    url: isString(urlOrConfig) ? urlOrConfig : baseConfig.url,
+    method: baseConfig.method ? baseConfig.method.toLowerCase() : ('get' as any)
   };
 };
 
