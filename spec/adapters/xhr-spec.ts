@@ -1,8 +1,7 @@
 import rewiremock from 'rewiremock';
 import * as sinon from 'sinon';
-import { expect } from '../__fixtures__/testHelper';
+import { expect, TEST_POST, trackEvents } from '../__fixtures__/testHelper';
 
-import { Observable } from 'rxjs';
 import { MockXMLHttpRequest } from '../__mocks__/xhr-mock';
 
 rewiremock('./xhrBackend').with({ xhrBackend: sinon.stub().returns(new MockXMLHttpRequest()) });
@@ -10,37 +9,17 @@ rewiremock.enable();
 
 import {
   HttpDownloadProgressEvent,
-  HttpErrorResponse,
-  HttpEvent,
   HttpEventType,
   HttpHeaderResponse,
   HttpResponse,
   HttpUploadProgressEvent,
-  RequestConfig,
-  validateStatus
+  RequestConfig
 } from '../../src';
 import { adapter } from '../../src/adapters/xhr';
 
 const getMockXhr = () => {
   const { mock } = rewiremock.getMock('./xhrBackend') as any;
   return mock.value.xhrBackend();
-};
-
-const trackEvents = (obs: Observable<HttpEvent<any>>) => {
-  const events = {
-    next: [] as Array<HttpEvent<any>>,
-    error: [] as Array<HttpErrorResponse>
-  };
-  obs.subscribe(event => events.next.push(event), err => events.error.push(err));
-  return events;
-};
-
-const TEST_POST: RequestConfig = {
-  url: '/test',
-  method: 'post',
-  data: 'some body',
-  responseType: 'text',
-  validateStatus: validateStatus
 };
 
 const XSSI_PREFIX = ")]}'\n";
