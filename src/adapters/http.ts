@@ -18,8 +18,6 @@ import { buildURL } from '../utils/urls';
 const isHttps = /https:?/;
 
 const httpAdapter = <T = any>(config: RequestConfigNode) =>
-  //TODO: Observable type need to be defined
-  //TODO: enhance check around !
   new Observable((observer: Observer<HttpEvent<T>>) => {
     const { emitError, emitComplete } = getObserverHandler(observer);
     let transportRequest: http.ClientRequest;
