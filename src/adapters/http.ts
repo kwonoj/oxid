@@ -37,7 +37,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
     }
 
     let data = config.data;
-    const headers = config.headers;
+    const headers = config.headers || {};
 
     // Set User-Agent (required by some servers)
     // Only set header if it hasn't been set in config
