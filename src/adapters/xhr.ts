@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import { Observable, Observer } from 'rxjs';
 import { isUndefined } from 'util';
 import { RequestConfigBrowser } from '../Request';
