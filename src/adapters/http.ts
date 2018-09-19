@@ -47,7 +47,9 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
       if (Buffer.isBuffer(data)) {
         // Noop, nothing to do
       } else if (isArrayBuffer(data)) {
-        data = Buffer.from(new Uint8Array(data));
+        //https://github.com/nodejs/node/issues/14118#issuecomment-313933800,
+        //Buffer.from accepts Uint8Array but type doesn't reflect it
+        data = Buffer.from(new Uint8Array(data) as any);
       } else if (isString(data)) {
         data = Buffer.from(data, 'utf-8');
       } else {
