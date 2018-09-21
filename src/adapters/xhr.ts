@@ -10,15 +10,14 @@ import {
   HttpResponse,
   HttpUploadProgressEvent
 } from '../Response';
-import { isFormData, isStandardBrowserEnv, XSRF_HEADER_NAME } from '../utils/base';
+import { isFormData, isStandardBrowserEnv, isString, XSRF_HEADER_NAME } from '../utils/base';
 import { cookies } from '../utils/cookies';
 import { createError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
 import { parseHeaders } from '../utils/parseHeaders';
+import { parseJsonResponse } from '../utils/parseJsonResponse';
 import { buildURL, isURLSameOrigin } from '../utils/urls';
 import { xhrBackend } from './xhrBackend';
-
-const XSSI_PREFIX = /^\)\]\}',?\n/;
 
 /**
  * Determine an appropriate URL for the response, by checking either
@@ -189,43 +188,16 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         status = !!body ? 200 : 0;
       }
 
-      // ok determines whether the response will be transmitted on the event or
-      // error channel. Unsuccessful status codes (not 2xx) will always be errors,
-      // but a successful status code can still result in an error if the user
-      // asked for JSON data and the body cannot be parsed as such.
-      let ok = status >= 200 && status < 300;
-
       // Check whether the body needs to be parsed as JSON (in many cases the browser
       // will have done that already).
-      if (config.responseType === 'json' && typeof body === 'string') {
-        // Save the original body, before attempting XSSI prefix stripping.
-        const originalBody = body;
-        body = body.replace(XSSI_PREFIX, '');
-        try {
-          // Attempt the parse. If it fails, a parse error should be delivered to the user.
-          body = body !== '' ? JSON.parse(body) : null;
-        } catch (error) {
-          // Since the JSON.parse failed, it's reasonable to assume this might not have been a
-          // JSON response. Restore the original body (including any XSSI prefix) to deliver
-          // a better error response.
-          body = originalBody;
-
-          // If this was an error request to begin with, leave it as a string, it probably
-          // just isn't JSON. Otherwise, deliver the parsing error to the user.
-          if (ok) {
-            // Even though the response status was 2xx, this is still an error.
-            ok = false;
-            // The parse error contains the text of the body that failed to parse.
-            body = { error, text: body };
-          }
-        }
-      }
+      const parsedBody =
+        config.responseType === 'json' && isString(body) ? parseJsonResponse(status, body) : { ok: true, body };
 
       // Prepare the response
       const responseData = !config.responseType || config.responseType === 'text' ? xhr.responseText : xhr.response;
       const response: HttpResponse<any> = {
         type: HttpEventType.Response,
-        data: body || responseData || null,
+        data: parsedBody.body || responseData || null,
         status: status || xhr.status,
         statusText: statusText,
         headers,
@@ -234,9 +206,14 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         responseUrl: url
       };
 
-      // The full body has been received and delivered, no further events
-      // are possible. This request is complete.
-      emitComplete(response);
+      //This will raised as error regardless existence of `validateStatus`
+      if (!parsedBody.ok) {
+        emitError(createError('Response parse failed', config, response.statusText, xhr, response));
+      } else {
+        // The full body has been received and delivered, no further events
+        // are possible. This request is complete.
+        emitComplete(response);
+      }
     };
 
     // The onError callback is called when something goes wrong at the network level.
