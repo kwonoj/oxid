@@ -146,19 +146,20 @@ describe('xhrAdapter', () => {
     expect(error[0].response!.data.data).to.equal('some data');
   });
 
-  it('does not handle a json error if validateStatus not provided', () => {
+  it('handle a json error even if validateStatus not provided', () => {
     const post: RequestConfig = {
       ...TEST_POST,
       responseType: 'json',
       validateStatus: undefined
     };
 
-    const { next } = trackEvents(adapter(post));
+    const { next, error } = trackEvents(adapter(post));
 
     mockXhr.mockFlush(500, 'Error', JSON.stringify({ data: 'some data' }));
 
-    expect(next).to.have.lengthOf(2);
-    expect((next[1] as HttpResponse<any>).data.data).to.equal('some data');
+    expect(next).to.have.lengthOf(1);
+    expect(error).to.have.lengthOf(1);
+    expect(error[0].response!.data.data).to.equal('some data');
   });
 
   it('handles a json error response with XSSI prefix', () => {
