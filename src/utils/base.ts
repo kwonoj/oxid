@@ -153,6 +153,7 @@ const pick = (value: Record<string, any>, ...props: Array<string>) =>
   }, {});
 
 const XSRF_HEADER_NAME = 'X-XSRF-TOKEN';
+const XSSI_PREFIX = /^\)\]\}',?\n/;
 
 export {
   isNode,
@@ -168,5 +169,6 @@ export {
   isURLSearchParams,
   isStandardBrowserEnv,
   XSRF_HEADER_NAME,
+  XSSI_PREFIX,
   pick
 };
