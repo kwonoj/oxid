@@ -1,4 +1,7 @@
+[![Package version](https://badgen.net/npm/v/oxid)](https://www.npmjs.com/package/oxid)
 [![Build Status](https://ojkwon.visualstudio.com/oxid/_apis/build/status/kwonoj.oxid?branchName=master)](https://ojkwon.visualstudio.com/oxid/_build/latest?definitionId=1)
+[![Coverage](https://badgen.net/codecov/c/github/kwonoj/oxid)](https://codecov.io/gh/kwonoj/oxid/branch/master)
+
 
 # Oxid
 
