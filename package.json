@@ -1,9 +1,13 @@
 {
   "name": "oxid",
   "version": "0.0.1",
-  "description": "",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "description": "Isomorphic http request based on rxjs observable",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/types/index.d.ts",
+  "browser": {
+    "./dist/cjs/adapters/http.js": "./dist/cjs/adapters/xhr.js",
+    "./dist/esm/adapters/http.js": "./dist/esm/adapters/xhr.js"
+  },
   "engines": {
     "npm": ">=3.0.0",
     "node": ">=4.2.4"

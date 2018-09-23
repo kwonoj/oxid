@@ -3,7 +3,6 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "declaration": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "suppressImplicitAnyIndexErrors": true,
@@ -15,7 +14,6 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es5",
-    "resolveJsonModule": true,
     "outDir": "./.tmp",
     "lib": [
       "es5",
