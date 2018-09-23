@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { version } from '../package.json';
 import { oxidVersion } from '../src/metadata';
+const { version } = require('../package.json'); //tslint:disable-line:no-require-imports no-var-requires
 
 describe('metadata', () => {
   it(`should match with package version`, () => {

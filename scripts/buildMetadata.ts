@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { version } from '../package.json';
+const { version } = require('../package.json'); //tslint:disable-line:no-require-imports no-var-requires
 
 /**
  * Naive script to generate metadata for oxid instead of import package.json directly

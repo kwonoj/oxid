@@ -21,7 +21,10 @@ module.exports = function(config) {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader'
+            loader: 'ts-loader',
+            options: {
+              configFile: 'tsconfig.base.json'
+            }
           }
         ]
       },

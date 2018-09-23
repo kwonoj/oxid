@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "outDir": "../.tmp"
+  },
+  "references": [
+    {
+      "path": "../src/tsconfig.cjs.json"
+    }
+  ]
+}
