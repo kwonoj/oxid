@@ -73,7 +73,12 @@ interface RequestConfigNode extends RequestConfigBase {
    * Custom agent to be used in node https request.
    */
   httpsAgent?: any;
-  transport?: { request: typeof import('http').request };
+  /**
+   * Custom transport to be used in request.
+   * Note: `transport.request` should implement `typeof import('http').request`,
+   * while doesn't strictly enforce types in here to avoid dependency to `@types/node`.
+   */
+  transport?: { request: Function };
 }
 
 interface RequestConfigBrowser extends RequestConfigBase {
