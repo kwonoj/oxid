@@ -26,7 +26,7 @@ const isNode = () => {
  * @param {any} val The value to test
  * @returns {boolean} True if value is a String, otherwise false
  */
-const isString = (val: any): val is String => typeof val === 'string';
+const isString = (val: any): val is string => typeof val === 'string';
 
 /**
  * Determine if a value is a Number

@@ -1,6 +1,5 @@
 /// <reference lib="dom" />
 import { Observable, Observer } from 'rxjs';
-import { isUndefined } from 'util';
 import { RequestConfigBrowser, ResponseType } from '../Request';
 import {
   HttpDownloadProgressEvent,
@@ -108,7 +107,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         .filter(
           ([key]) =>
             // Ignore remove Content-Type if data is undefined
-            key.toLowerCase() !== 'content-type' || !isUndefined(requestData)
+            key.toLowerCase() !== 'content-type' || !!requestData
         )
         .forEach(([key, value]) => xhr.setRequestHeader(key, value));
 
