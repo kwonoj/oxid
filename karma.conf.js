@@ -21,10 +21,7 @@ module.exports = function(config) {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true
-            }
+            loader: 'ts-loader'
           }
         ]
       },
