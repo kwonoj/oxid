@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as webpack from 'webpack';
 
 module.exports = (config: { set: (config: object) => void }) => {
@@ -13,6 +14,7 @@ module.exports = (config: { set: (config: object) => void }) => {
       'text/x-typescript': ['ts', 'tsx']
     },
     webpack: {
+      devtool: 'inline-source-map',
       mode: 'development',
       resolve: {
         extensions: ['.ts', '.js']
@@ -24,6 +26,15 @@ module.exports = (config: { set: (config: object) => void }) => {
             loader: 'ts-loader',
             options: {
               configFile: 'tsconfig.base.json'
+            }
+          },
+          {
+            test: /\.ts$/,
+            exclude: [path.resolve(__dirname, 'spec')],
+            enforce: 'post',
+            use: {
+              loader: 'istanbul-instrumenter-loader',
+              options: { esModules: true }
             }
           }
         ]
@@ -37,7 +48,12 @@ module.exports = (config: { set: (config: object) => void }) => {
     webpackMiddleware: {
       stats: 'errors-only'
     },
-    reporters: ['progress'],
-    browsers: ['ChromeHeadless']
+    reporters: ['progress', 'coverage-istanbul'],
+    browsers: ['ChromeHeadless'],
+    coverageIstanbulReporter: {
+      reports: ['json'],
+      dir: path.join(__dirname, 'coverage', 'karma'),
+      fixWebpackSourcePaths: true
+    }
   });
 };
