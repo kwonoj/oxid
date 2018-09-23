@@ -10,32 +10,32 @@ enum HttpEventType {
   /**
    * The request was sent out over the wire.
    */
-  Sent,
+  Sent = 'Sent',
 
   /**
    * An upload progress event was received.
    */
-  UploadProgress,
+  UploadProgress = 'UploadProgress',
 
   /**
    * The response status code and headers were received.
    */
-  ResponseHeader,
+  ResponseHeader = 'ResponseHeader',
 
   /**
    * A download progress event was received.
    */
-  DownloadProgress,
+  DownloadProgress = 'DownloadProgress',
 
   /**
    * The full response including the body was received.
    */
-  Response,
+  Response = 'Response',
 
   /**
    * A custom event from an interceptor or a backend.
    */
-  User
+  User = 'User'
 }
 
 /**
