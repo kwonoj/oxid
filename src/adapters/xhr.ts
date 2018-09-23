@@ -37,7 +37,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     const { reportProgress, withCredentials } = config;
     const { emitError, emitComplete } = getObserverHandler(observer);
     // Start by setting up the XHR object with request method, URL, and withCredentials flag.
-    const xhr = xhrBackend();
+    const xhr: XMLHttpRequest = xhrBackend();
 
     // This is the return from the Observable function, which is the
     // request cancellation handler.

@@ -173,7 +173,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
     let transport: { request: typeof import('http').request };
     const isHttpsProxy = isHttpsRequest && (proxy ? isHttps.test(proxy.protocol || 'http') : true);
     if (config.transport) {
-      transport = config.transport;
+      transport = config.transport as any;
     } else if (config.maxRedirects === 0) {
       transport = isHttpsProxy ? https : http;
     } else {

@@ -6,6 +6,7 @@ export * from './core/oxid';
 export * from './defaultOptions';
 export * from './Request';
 export * from './Response';
+export * from './metadata';
 
 /**
  * Create an instance of Oxid, only wraps class ctor.
