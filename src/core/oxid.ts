@@ -1,6 +1,6 @@
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { RequestConfig } from '../Request';
+import { Method, RequestConfig } from '../Request';
 import { HttpErrorResponse, HttpEvent } from '../Response';
 import { isString } from '../utils/base';
 import { buildURL } from '../utils/urls';
@@ -21,7 +21,7 @@ const buildConfig = (urlOrConfig: RequestConfig | string, config?: RequestConfig
   return {
     ...baseConfig,
     url: isString(urlOrConfig) ? urlOrConfig : baseConfig.url,
-    method: baseConfig.method ? baseConfig.method.toLowerCase() : ('get' as any)
+    method: baseConfig.method ? (baseConfig.method.toLowerCase() as Method) : Method.Get
   };
 };
 
@@ -50,11 +50,11 @@ class Oxid {
   };
 
   constructor(private readonly baseConfig: RequestConfig) {
-    ['delete', 'get', 'head', 'options'].forEach(
+    [Method.Delete, Method.Get, Method.Head, Method.Options].forEach(
       (method: any) => (this[method] = (url: string, config: RequestConfig) => this.request({ ...config, method, url }))
     );
 
-    ['post', 'put', 'patch'].forEach(
+    [Method.Post, Method.Put, Method.Patch].forEach(
       (method: any) =>
         (this[method] = (url: string, data: any, config: RequestConfig) =>
           this.request({ ...config, data, method, url }))

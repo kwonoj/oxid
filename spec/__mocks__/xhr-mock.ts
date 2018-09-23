@@ -1,3 +1,5 @@
+import { ResponseType } from '../../src';
+
 class MockXMLHttpRequestUpload {
   constructor(private mock: MockXMLHttpRequest) {}
 
@@ -20,7 +22,7 @@ class MockXMLHttpRequest {
 
   // Directly settable interface.
   withCredentials: boolean = false;
-  responseType: string = 'text';
+  responseType = ResponseType.Text;
 
   // Mocked response interface.
   response: any | undefined = undefined;
@@ -118,7 +120,7 @@ class MockXMLHttpRequest {
     this.mockHeaders = {};
     this.mockAborted = false;
     this.withCredentials = false;
-    this.responseType = 'text';
+    this.responseType = ResponseType.Text;
     this.response = undefined;
     this.responseText = undefined;
     this.responseURL = null;

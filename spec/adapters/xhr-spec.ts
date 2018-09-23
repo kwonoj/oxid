@@ -1,14 +1,13 @@
 import rewiremock from 'rewiremock';
 import * as sinon from 'sinon';
+import { Adapter, RequestConfig, ResponseType } from '../../src/Request';
 import {
-  Adapter,
   HttpDownloadProgressEvent,
   HttpEventType,
   HttpHeaderResponse,
   HttpResponse,
-  HttpUploadProgressEvent,
-  RequestConfig
-} from '../../src';
+  HttpUploadProgressEvent
+} from '../../src/Response';
 import { expect, TEST_POST, trackEvents } from '../__fixtures__/testHelper';
 import { MockXMLHttpRequest } from '../__mocks__/xhr-mock';
 
@@ -47,7 +46,7 @@ describe('xhrAdapter', () => {
   it('sets method, url, and responseType correctly', () => {
     adapter(TEST_POST).subscribe();
     expect(mockXhr.method).to.equal('POST');
-    expect(mockXhr.responseType).to.equal('text');
+    expect(mockXhr.responseType).to.equal(ResponseType.Text);
     expect(mockXhr.url).to.equal('/test');
   });
 
@@ -113,7 +112,7 @@ describe('xhrAdapter', () => {
   it('handles a json response', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json'
+      responseType: ResponseType.Json
     };
 
     const { next } = trackEvents(adapter(post));
@@ -126,7 +125,7 @@ describe('xhrAdapter', () => {
   it('handles a blank json response', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json'
+      responseType: ResponseType.Json
     };
 
     const { next } = trackEvents(adapter(post));
@@ -140,7 +139,7 @@ describe('xhrAdapter', () => {
   it('handles a json error response with default validateStatus', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json'
+      responseType: ResponseType.Json
     };
 
     const { next, error } = trackEvents(adapter(post));
@@ -155,7 +154,7 @@ describe('xhrAdapter', () => {
   it('handle a json error even if validateStatus not provided', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json',
+      responseType: ResponseType.Json,
       validateStatus: undefined
     };
 
@@ -171,7 +170,7 @@ describe('xhrAdapter', () => {
   it('handles a json error response with XSSI prefix', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json'
+      responseType: ResponseType.Json
     };
 
     const { next, error } = trackEvents(adapter(post));
@@ -185,11 +184,11 @@ describe('xhrAdapter', () => {
   it('handles a json string response', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json'
+      responseType: ResponseType.Json
     };
 
     const { next } = trackEvents(adapter(post));
-    expect(mockXhr.responseType).to.equal('text');
+    expect(mockXhr.responseType).to.equal(ResponseType.Text);
     mockXhr.mockFlush(200, 'OK', JSON.stringify('this is a string'));
 
     expect(next).to.have.lengthOf(2);
@@ -199,7 +198,7 @@ describe('xhrAdapter', () => {
   it('handles a json response with an XSSI prefix', () => {
     const post: RequestConfig = {
       ...TEST_POST,
-      responseType: 'json'
+      responseType: ResponseType.Json
     };
 
     const { next } = trackEvents(adapter(post));

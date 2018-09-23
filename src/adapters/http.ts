@@ -8,7 +8,7 @@ import * as zlib from 'zlib';
 
 import { isString } from 'util';
 import { oxidVersion } from '../metadata';
-import { ProxyConfig, RequestConfigNode } from '../Request';
+import { ProxyConfig, RequestConfigNode, ResponseType } from '../Request';
 import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
@@ -219,7 +219,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
         request: lastRequest
       } as HttpResponse<any>;
 
-      if (config.responseType === 'stream') {
+      if (config.responseType === ResponseType.Stream) {
         response.data = stream;
         emitComplete(response);
       } else {
@@ -253,7 +253,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
 
         stream.on('end', () => {
           let responseData: any = Buffer.concat(responseBuffer.filter(x => !!x));
-          if (config.responseType !== 'arraybuffer') {
+          if (config.responseType !== ResponseType.ArrayBuffer) {
             responseData = responseData.toString(config.responseEncoding);
           }
 

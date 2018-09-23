@@ -1,7 +1,7 @@
 import rewiremock from 'rewiremock';
 import { Readable } from 'stream';
-import { Adapter, RequestConfigNode } from '../../src';
 import { oxidVersion } from '../../src/metadata';
+import { Adapter, RequestConfigNode, ResponseType } from '../../src/Request';
 import { HttpEventType, HttpResponse } from '../../src/Response';
 import { expect, itOnly, TEST_POST, trackEvents } from '../__fixtures__/testHelper';
 import { MockHttp } from '../__mocks__/http-mock';
@@ -391,7 +391,7 @@ describe('httpAdapter', () => {
     const { next } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json'
+        responseType: ResponseType.Json
       })
     );
     mockHttp.mockFlush(200, 'OK', JSON.stringify({ data: 'some data' }));
@@ -410,7 +410,7 @@ describe('httpAdapter', () => {
     const { next } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json'
+        responseType: ResponseType.Json
       })
     );
     mockHttp.mockFlush(200, 'OK', '');
@@ -429,7 +429,7 @@ describe('httpAdapter', () => {
     const { next, error } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json'
+        responseType: ResponseType.Json
       })
     );
     mockHttp.mockFlush(500, 'Error', JSON.stringify({ data: 'some data' }));
@@ -444,7 +444,7 @@ describe('httpAdapter', () => {
     const { next, error } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json',
+        responseType: ResponseType.Json,
         validateStatus: undefined
       })
     );
@@ -460,7 +460,7 @@ describe('httpAdapter', () => {
     const { next, error } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json'
+        responseType: ResponseType.Json
       })
     );
 
@@ -476,7 +476,7 @@ describe('httpAdapter', () => {
     const { next } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json'
+        responseType: ResponseType.Json
       })
     );
 
@@ -491,7 +491,7 @@ describe('httpAdapter', () => {
     const { next } = trackEvents(
       adapter({
         ...post,
-        responseType: 'json'
+        responseType: ResponseType.Json
       })
     );
 
