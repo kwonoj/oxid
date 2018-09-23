@@ -6,7 +6,9 @@
   "types": "./dist/types/index.d.ts",
   "browser": {
     "./dist/cjs/adapters/http.js": "./dist/cjs/adapters/xhr.js",
-    "./dist/esm/adapters/http.js": "./dist/esm/adapters/xhr.js"
+    "./dist/esm/adapters/http.js": "./dist/esm/adapters/xhr.js",
+    "./dist/cjs/utils/node/isURLSearchParams.js": "./dist/cjs/utils/browser/isURLSearchParams.js",
+    "./dist/esm/utils/node/isURLSearchParams.js": "./dist/esm/utils/browser/isURLSearchParams.js"
   },
   "engines": {
     "npm": ">=3.0.0",

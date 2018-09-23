@@ -51,11 +51,11 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
 
   // Flatten headers
   // TODO: verify flatten behavior
-  const current = config.headers;
+  const { common, ...rest } = config.headers;
   config.headers = {
-    ...(current.common || {}),
-    ...(current[config.method] || {}),
-    ...(current || {})
+    ...(common || {}),
+    ...(rest[config.method] || {}),
+    ...(rest || {})
   };
 
   (Object as any).values(Method).forEach((method: string) => delete config.headers[method]);

@@ -7,7 +7,7 @@ const cookies = (() => {
       write: () => {
         /* noop */
       },
-      read: () => null,
+      read: (_name: string) => null,
       remove: () => {
         /* noop */
       }

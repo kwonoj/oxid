@@ -26,7 +26,7 @@ const isNode = () => {
  * @param {any} val The value to test
  * @returns {boolean} True if value is a String, otherwise false
  */
-const isString = (val: any): val is String => typeof val === 'string';
+const isString = (val: any): val is string => typeof val === 'string';
 
 /**
  * Determine if a value is a Number
@@ -106,15 +106,10 @@ const isBlob = (val: any) => toString.call(val) === '[object Blob]';
  * @param unknown val The value to test
  * @returns boolean True if value is a URLSearchParams object, otherwise false
  */
-const isURLSearchParams = (val: unknown) => {
-  //tslint:disable-next-line:no-require-imports
-  const urlCtor = isNode() ? require('url').URLSearchParams : undefined;
-  const urlCtorDefined = typeof urlCtor !== 'undefined';
-  const rootCtor = root.URLSearchParams;
-  const rootCtorDefined = typeof rootCtor !== 'undefined';
-
-  return (rootCtorDefined && val instanceof rootCtor) || (isNode() ? urlCtorDefined && val instanceof urlCtor : false);
-};
+const isURLSearchParams = (val: unknown) =>
+  isNode()
+    ? require('./node/isURLSearchParams').isURLSearchParams(val) //tslint:disable-line:no-require-imports
+    : require('./browser/isURLSearchParams').isURLSearchParams(val); //tslint:disable-line:no-require-imports
 
 /**
  * Determine if we're running in a standard browser environment

@@ -6,10 +6,10 @@ import { Observable, Observer } from 'rxjs';
 import * as url from 'url';
 import * as zlib from 'zlib';
 
-import { isString } from 'util';
 import { oxidVersion } from '../metadata';
 import { ProxyConfig, RequestConfigNode, ResponseType } from '../Request';
 import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
+import { isString } from '../utils/base';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
