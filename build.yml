@@ -29,6 +29,7 @@ jobs:
   - script: npm run test:karma
     displayName: Unit test on headless browser
   - script: |
+      npm run test:size
       npm run test:coverage
       # merge coverage generated from nodejs & browser
       npx istanbul-merge --out ./coverage/coverage-final.json ./coverage/nyc/coverage-final.json ./coverage/karma/coverage-final.json
