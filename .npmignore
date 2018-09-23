@@ -5,7 +5,6 @@ yarn.lock
 coverage
 typings/
 .vscode/
-src/
 spec/
 scripts/
 !dist/src
@@ -18,7 +17,11 @@ tsconfg.json
 tslint.json
 wallaby.js
 .circleci/
-tsconfig.json
+tsconfig.*
 commitlint.config.js
 *.yml
 *.tgz
+karma.conf.js
+.tmp
+.nyc_output
+.dependency-cruiser.json
