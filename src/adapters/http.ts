@@ -13,6 +13,7 @@ import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
 import { isArrayBuffer, isStream } from '../utils/base';
 import { createError, enhanceError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
+import { parseJsonResponse } from '../utils/parseJsonResponse';
 import { buildURL } from '../utils/urls';
 
 const isHttps = /https:?/;
@@ -92,7 +93,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
     const options: any = {
       path: buildURL(parsed.path!, config.params, config.paramsSerializer).replace(/^\?/, ''),
       method: config.method.toUpperCase(),
-      headers: headers,
+      headers,
       agent: agent,
       auth: auth
     };
@@ -164,7 +165,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
 
       // Basic proxy authorization
       if (proxy.auth) {
-        const base64 = Buffer.from(proxy.auth.username + ':' + proxy.auth.password, 'utf8').toString('base64');
+        const base64 = Buffer.from(`${proxy.auth.username}:${proxy.auth.password}`, 'utf8').toString('base64');
         options.headers['Proxy-Authorization'] = 'Basic ' + base64;
       }
     }
@@ -211,7 +212,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
       const lastRequest = (res as any).req || transportRequest;
 
       const response = {
-        status: res.statusCode || Number.NaN,
+        status: Number.isSafeInteger(res.statusCode!) ? res.statusCode : Number.NaN,
         statusText: res.statusMessage || '',
         headers: res.headers,
         config: config,
@@ -251,13 +252,30 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
         });
 
         stream.on('end', () => {
-          let responseData: any = Buffer.concat(responseBuffer);
+          let responseData: any = Buffer.concat(responseBuffer.filter(x => !!x));
           if (config.responseType !== 'arraybuffer') {
             responseData = responseData.toString(config.responseEncoding);
           }
 
-          response.data = responseData;
-          emitComplete(response);
+          const parsedBody =
+            config.responseType === 'json' && isString(responseData)
+              ? parseJsonResponse(response.status, responseData)
+              : { ok: true, body: responseData };
+
+          response.data = parsedBody.body;
+
+          //This will raised as error regardless existence of `validateStatus`
+          if (!parsedBody.ok) {
+            emitError(createError('Response parse failed', config, response.statusText, transportRequest, response));
+          } else {
+            // Applying same normalization logic as xhr
+            if (response.status === 0) {
+              response.status = !!responseData ? 200 : 0;
+            }
+            // The full body has been received and delivered, no further events
+            // are possible. This request is complete.
+            emitComplete(response);
+          }
         });
       }
     });
