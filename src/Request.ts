@@ -45,7 +45,7 @@ interface RequestConfigBase {
   maxRedirects?: number;
   socketPath?: string | null;
 
-  proxy?: ProxyConfig | false;
+  proxy?: ProxyConfig;
 }
 
 interface RequestConfigNode extends RequestConfigBase {

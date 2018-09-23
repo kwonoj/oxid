@@ -2,8 +2,6 @@ import { expect } from 'chai';
 
 import { defaultOptions } from '../src/defaultOptions';
 
-//TODO: verify config value change via index import for oxid instance
-//(remaining tests in default.spec.js)
 describe('defaultOptions', () => {
   it('should transform request json', () => {
     expect(defaultOptions.transformRequest![0]({ foo: 'bar' }, null as any)).to.equal('{"foo":"bar"}');

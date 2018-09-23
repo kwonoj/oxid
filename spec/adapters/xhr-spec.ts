@@ -1,13 +1,7 @@
 import rewiremock from 'rewiremock';
 import * as sinon from 'sinon';
-import { expect, TEST_POST, trackEvents } from '../__fixtures__/testHelper';
-
-import { MockXMLHttpRequest } from '../__mocks__/xhr-mock';
-
-rewiremock('./xhrBackend').with({ xhrBackend: sinon.stub().returns(new MockXMLHttpRequest()) });
-rewiremock.enable();
-
 import {
+  Adapter,
   HttpDownloadProgressEvent,
   HttpEventType,
   HttpHeaderResponse,
@@ -15,7 +9,10 @@ import {
   HttpUploadProgressEvent,
   RequestConfig
 } from '../../src';
-import { adapter } from '../../src/adapters/xhr';
+import { expect, TEST_POST, trackEvents } from '../__fixtures__/testHelper';
+import { MockXMLHttpRequest } from '../__mocks__/xhr-mock';
+
+rewiremock('./xhrBackend').with({ xhrBackend: sinon.stub().returns(new MockXMLHttpRequest()) });
 
 const getMockXhr = () => {
   const { mock } = rewiremock.getMock('./xhrBackend') as any;
@@ -26,10 +23,19 @@ const XSSI_PREFIX = ")]}'\n";
 
 describe('xhrAdapter', () => {
   let mockXhr: MockXMLHttpRequest;
-  beforeEach(() => (mockXhr = getMockXhr()));
+  let adapter: Adapter;
+
+  beforeEach(() => {
+    rewiremock.enable();
+    //tslint:disable-next-line:no-require-imports
+    ({ adapter } = require('../../src/adapters/xhr'));
+    mockXhr = getMockXhr();
+  });
+
   afterEach(() => {
     mockXhr.clear();
     mockXhr = null as any;
+    rewiremock.disable();
   });
 
   it('emits status immediately', () => {
