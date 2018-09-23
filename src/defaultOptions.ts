@@ -1,6 +1,6 @@
 import * as isBuffer from 'is-buffer';
 
-import { Adapter, RequestConfig } from './Request';
+import { Adapter, Method, RequestConfig } from './Request';
 import {
   isArrayBuffer,
   isBlob,
@@ -90,8 +90,8 @@ const defaultOptions: Readonly<RequestConfig> = (() => {
     }
   };
 
-  ['delete', 'get', 'head'].forEach(method => (ret.headers[method] = {}));
-  ['post', 'put', 'patch'].forEach(method => {
+  [Method.Delete, Method.Get, Method.Head].forEach(method => (ret.headers[method] = {}));
+  [Method.Post, Method.Put, Method.Patch].forEach(method => {
     const current = ret.headers[method] || {};
     ret.headers[method] = {
       ...current,

@@ -1,8 +1,24 @@
 import { Observable } from 'rxjs';
 import { HttpEvent } from './Response';
 
-type Method = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch';
-type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream';
+enum Method {
+  Get = 'get',
+  Delete = 'delete',
+  Head = 'head',
+  Options = 'options',
+  Post = 'post',
+  Put = 'put',
+  Patch = 'patch'
+}
+
+enum ResponseType {
+  ArrayBuffer = 'arraybuffer',
+  Blob = 'blob',
+  Document = 'document',
+  Json = 'json',
+  Text = 'text',
+  Stream = 'stream'
+}
 
 interface BasicCredentials {
   username: string;

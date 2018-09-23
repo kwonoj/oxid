@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import { expect } from 'chai';
 import { Observable } from 'rxjs';
 import { validateStatus } from '../../src/defaultOptions';
-import { RequestConfig } from '../../src/Request';
+import { Method, RequestConfig, ResponseType } from '../../src/Request';
 import { HttpErrorResponse, HttpEvent } from '../../src/Response';
 
 let imported = false;
@@ -32,9 +32,9 @@ const itOnly = {
  */
 const TEST_POST: RequestConfig = {
   url: '/test',
-  method: 'post',
+  method: Method.Post,
   data: 'some body',
-  responseType: 'text',
+  responseType: ResponseType.Text,
   validateStatus: validateStatus
 };
 

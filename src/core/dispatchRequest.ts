@@ -1,5 +1,5 @@
 import { defaultOptions } from '../defaultOptions';
-import { RequestConfig, Transformer } from '../Request';
+import { Method, RequestConfig, Transformer } from '../Request';
 import { combineURLs, isAbsoluteURL } from '../utils/urls';
 
 import { Observable, throwError } from 'rxjs';
@@ -58,7 +58,7 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
     ...(current || {})
   };
 
-  ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'].forEach(method => delete config.headers[method]);
+  (Object as any).values(Method).forEach((method: string) => delete config.headers[method]);
 
   const adapter = config.adapter || defaultOptions.adapter!;
 

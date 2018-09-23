@@ -1,7 +1,7 @@
 /// <reference lib="dom" />
 import { Observable, Observer } from 'rxjs';
 import { isUndefined } from 'util';
-import { RequestConfigBrowser } from '../Request';
+import { RequestConfigBrowser, ResponseType } from '../Request';
 import {
   HttpDownloadProgressEvent,
   HttpEvent,
@@ -128,7 +128,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         // xhr.response will be null, and xhr.responseText cannot be accessed to
         // retrieve the prefixed JSON data in order to strip the prefix. Thus, all JSON
         // is parsed by first requesting text and then applying JSON.parse.
-        xhr.responseType = (responseType !== 'json' ? responseType : 'text') as any;
+        xhr.responseType = (responseType !== ResponseType.Json ? responseType : ResponseType.Text) as any;
       } catch (e) {
         // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
         // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
@@ -194,7 +194,8 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         config.responseType === 'json' && isString(body) ? parseJsonResponse(status, body) : { ok: true, body };
 
       // Prepare the response
-      const responseData = !config.responseType || config.responseType === 'text' ? xhr.responseText : xhr.response;
+      const responseData =
+        !config.responseType || config.responseType === ResponseType.Text ? xhr.responseText : xhr.response;
       const response: HttpResponse<any> = {
         type: HttpEventType.Response,
         data: parsedBody.body || responseData || null,
@@ -261,7 +262,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       // If the request was for text content and a partial response is
       // available on XMLHttpRequest, include it in the progress event
       // to allow for streaming reads.
-      if (xhr.responseType === 'text' && !!xhr.responseText) {
+      if (xhr.responseType === ResponseType.Text && !!xhr.responseText) {
         progressEvent.partialText = xhr.responseText;
       }
 
