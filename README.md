@@ -114,3 +114,7 @@ Few npm scripts are supported for build / test code.
 - `build:clean`: Clean up existing build.
 - `test`: Run unit test. Does not require `build` before execute test.
 - `lint`: Run lint over all codebases.
+
+## Credits
+
+While this module is **NOT** officially affiliated, it relies on lot of prior art from [`axios`](https://github.com/axios/axios) and [`@angular/http`](https://github.com/angular/angular/tree/master/packages/common/http). You may notice some similar logics and it is expected.

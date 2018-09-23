@@ -9,6 +9,7 @@ jobs:
     matrix:
       node8:
         nodeVersion: '8.x'
+        coverage: true
       #node9:
       #  nodeVersion: '9.x'
       #node10:
@@ -25,7 +26,14 @@ jobs:
     displayName: Lint
   - script: npm run build
     displayName: Build
-  - script: npm run test:coverage
-    displayName: Unit test
   - script: npm run test:karma
     displayName: Unit test on headless browser
+  - script: |
+      npm run test:size
+      npm run test:coverage
+      # merge coverage generated from nodejs & browser
+      npx istanbul-merge --out ./coverage/coverage-final.json ./coverage/nyc/coverage-final.json ./coverage/karma/coverage-final.json
+      npx codecov -f ./coverage/coverage-final.json -t $(CODECOV_TOKEN)
+    displayName: Report test coverage
+    # Run covearage report only on one matrix job on linux host
+    condition: and(eq(variables['Agent.OS'], 'Linux'), eq(variables['coverage'], 'true'))
