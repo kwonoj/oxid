@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import { ResponseType } from '../../src';
 
 class MockXMLHttpRequestUpload {
