@@ -21,7 +21,7 @@ tsconfig.*
 commitlint.config.js
 *.yml
 *.tgz
-karma.conf.js
+karma.conf.*
 .tmp
 .nyc_output
 .dependency-cruiser.json
