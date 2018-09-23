@@ -1,4 +1,7 @@
 import { XSSI_PREFIX } from './base';
+import { getDebug } from './debug';
+
+const debug = getDebug('parseJsonResponse');
 
 /**
  * Parse given body as json object if responseType is configured
@@ -9,6 +12,7 @@ const parseJsonResponse = (status: number, body: any) => {
   // but a successful status code can still result in an error if the user
   // asked for JSON data and the body cannot be parsed as such.
   const ok = status >= 200 && status < 300;
+  debug(`Status '${status}' considered as '${ok ? 'ok' : 'not ok'}'`);
 
   // Save the original body, before attempting XSSI prefix stripping.
   const originalBody = body;
@@ -31,6 +35,7 @@ const parseJsonResponse = (status: number, body: any) => {
       ret = { error, text: ret };
     }
 
+    debug(`parse response body failed, returning original body with error`, error);
     return { ok: false, body: ret };
   }
 };
