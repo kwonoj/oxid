@@ -96,6 +96,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.0.58",
     "@types/sinon": "^5.0.2",
+    "@types/webpack": "^4.4.12",
     "chai": "^4.1.2",
     "chai-subset": "^1.6.0",
     "commitizen": "2.10.1",

@@ -1,6 +1,6 @@
-const webpack = require('webpack');
+import * as webpack from 'webpack';
 
-module.exports = function(config) {
+module.exports = (config: { set: (config: object) => void }) => {
   config.set({
     frameworks: ['mocha'],
     basePath: '',
@@ -31,7 +31,7 @@ module.exports = function(config) {
       plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new (require('rewiremock/webpack/plugin'))()
+        new (require('rewiremock/webpack/plugin'))() //tslint:disable-line:no-require-imports
       ]
     },
     webpackMiddleware: {
