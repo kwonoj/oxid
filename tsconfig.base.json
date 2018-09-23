@@ -2,6 +2,7 @@
   "compilerOptions": {
     "removeComments": true,
     "preserveConstEnums": true,
+    "declaration": false,
     "sourceMap": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
