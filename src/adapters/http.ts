@@ -7,7 +7,7 @@ import * as url from 'url';
 import * as zlib from 'zlib';
 
 import { oxidVersion } from '../metadata';
-import { ProxyConfig, RequestConfigNode, ResponseType } from '../Request';
+import { RequestConfigNode, ResponseType } from '../Request';
 import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
 import { isString } from '../utils/base';
 import { isArrayBuffer, isStream } from '../utils/base';
@@ -30,13 +30,13 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
       transportRequest.abort();
     };
 
-    if (!config.url || !config.method) {
+    let data = config.data;
+    const { proxy, headers = {}, maxContentLength, url: configUrl, method } = config;
+
+    if (!configUrl || !method) {
       emitError(createError(`Invalid request configuration`));
       return tearDown;
     }
-
-    let data = config.data;
-    const headers = config.headers || {};
 
     // Set User-Agent (required by some servers)
     // Only set header if it hasn't been set in config
@@ -73,7 +73,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
     }
 
     // Parse url
-    const parsed = url.parse(config.url);
+    const parsed = url.parse(configUrl);
     const protocol = parsed.protocol || 'http:';
 
     if (!auth && parsed.auth) {
@@ -92,7 +92,7 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
 
     const options: any = {
       path: buildURL(parsed.path!, config.params, config.paramsSerializer).replace(/^\?/, ''),
-      method: config.method.toUpperCase(),
+      method: method.toUpperCase(),
       headers,
       agent: agent,
       auth: auth
@@ -103,57 +103,6 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
     } else {
       options.hostname = parsed.hostname;
       options.port = parsed.port;
-    }
-
-    let proxy: ProxyConfig | false | undefined = config.proxy;
-    if (!proxy && proxy !== false) {
-      const proxyEnv = protocol.slice(0, -1) + '_proxy';
-      const proxyUrl = process.env[proxyEnv] || process.env[proxyEnv.toUpperCase()];
-      if (proxyUrl) {
-        const { hostname, port, auth } = url.parse(proxyUrl);
-        const noProxyEnv = process.env.no_proxy || process.env.NO_PROXY;
-        let shouldProxy = true;
-
-        if (noProxyEnv) {
-          const noProxy = noProxyEnv.split(',').map(s => s.trim());
-
-          shouldProxy = !noProxy.some(proxyElement => {
-            if (!proxyElement) {
-              return false;
-            }
-            if (proxyElement === '*') {
-              return true;
-            }
-
-            const parsedHostname = parsed.hostname;
-            if (
-              proxyElement[0] === '.' &&
-              !!parsedHostname &&
-              parsedHostname.substr(parsedHostname.length - proxyElement.length) === proxyElement &&
-              proxyElement.match(/\./g)!.length === parsedHostname.match(/\./g)!.length
-            ) {
-              return true;
-            }
-
-            return parsed.hostname === proxyElement;
-          });
-        }
-
-        if (shouldProxy && hostname && port) {
-          proxy = {
-            host: hostname,
-            port: parseInt(port, 10)
-          };
-
-          if (auth) {
-            const proxyUrlAuth = auth.split(':');
-            proxy.auth = {
-              username: proxyUrlAuth[0],
-              password: proxyUrlAuth[1]
-            };
-          }
-        }
-      }
     }
 
     if (proxy) {
@@ -183,8 +132,8 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
       transport = isHttpsProxy ? httpsFollow : httpFollow;
     }
 
-    if (config.maxContentLength && config.maxContentLength > -1) {
-      options.maxBodyLength = config.maxContentLength;
+    if (maxContentLength && maxContentLength > -1) {
+      options.maxBodyLength = maxContentLength;
     }
 
     // Create the request
@@ -228,19 +177,8 @@ const httpAdapter = <T = any>(config: RequestConfigNode) =>
           responseBuffer.push(chunk);
 
           // make sure the content length is not over the maxContentLength if specified
-          if (
-            !!config.maxContentLength &&
-            config.maxContentLength > -1 &&
-            Buffer.concat(responseBuffer).length > config.maxContentLength
-          ) {
-            emitError(
-              createError(
-                'maxContentLength size of ' + config.maxContentLength + ' exceeded',
-                config,
-                null,
-                lastRequest
-              )
-            );
+          if (!!maxContentLength && maxContentLength > -1 && Buffer.concat(responseBuffer).length > maxContentLength) {
+            emitError(createError(`maxContentLength size of ${maxContentLength} exceeded`, config, null, lastRequest));
           }
         });
 
