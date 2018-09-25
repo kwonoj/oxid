@@ -12,8 +12,8 @@
     "./dist/esm/utils/node/isURLSearchParams.js": "./dist/esm/utils/browser/isURLSearchParams.js"
   },
   "engines": {
-    "npm": ">=3.0.0",
-    "node": ">=4.2.4"
+    "npm": ">=6",
+    "node": ">=8"
   },
   "config": {
     "commitizen": {
@@ -53,11 +53,12 @@
     }
   ],
   "scripts": {
-    "prepublishOnly ": "npm-run-all prepush test:*",
+    "prepublishOnly ": "npm-run-all prepush test",
     "prepare": "npm-run-all build:clean build:metadata build",
     "precommit": "lint-staged",
     "prepush": "npm-run-all lint:* prepare test:unit",
     "commitmsg": "commitlint -e",
+    "test": "npm-run-all test:*",
     "test:unit": "cross-env TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.base.json mocha --reporter dot --require ts-node/register --require source-map-support/register --recursive --bail \"spec/**/*.ts\"",
     "test:coverage": "nyc npm run test:unit",
     "test:karma": "karma start --single-run",
