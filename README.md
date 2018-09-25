@@ -1,7 +1,7 @@
 [![Package version](https://badgen.net/npm/v/oxid)](https://www.npmjs.com/package/oxid)
 [![Build Status](https://ojkwon.visualstudio.com/oxid/_apis/build/status/kwonoj.oxid?branchName=master)](https://ojkwon.visualstudio.com/oxid/_build/latest?definitionId=1)
 [![Coverage](https://badgen.net/codecov/c/github/kwonoj/oxid)](https://codecov.io/gh/kwonoj/oxid/branch/master)
-
+[![Node engine version](https://badgen.net/npm/node/oxid)](https://www.npmjs.com/package/oxid)
 
 # Oxid
 
@@ -107,7 +107,7 @@ interface RequestConfigBrowser extends RequestConfigBase {
 }
 ```
 
-Note `defaultOptions` object is immutable. Changing, reassigning values into existing default configuration value won't work, instead should supply new configuration object instead.
+Note `defaultOptions` object is immutable. Changing, reassigning values into existing default configuration value won't work, instead should supply new configuration object.
 
 ## Building / Testing
 
