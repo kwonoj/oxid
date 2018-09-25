@@ -109,6 +109,30 @@ interface RequestConfigBrowser extends RequestConfigBase {
 
 Note `defaultOptions` object is immutable. Changing, reassigning values into existing default configuration value won't work, instead should supply new configuration object.
 
+## Debugging internals of oxid
+
+Oxid itself doesn't have mechanism to write log. Instead, it exposes a function to wire any logger used in application.
+
+```ts
+function enableLogger(logger: logFunctionType): void;
+function enableLogger(logger: Partial<Logger>): void;
+function enableLogger(logger: logFunctionType | Partial<Logger>);
+```
+
+It could be either single function, or object have loglevels like debug, info, warn, error. Notes `enableLogger` is **Global function** to affects any instance of oxid, and only starts emitting log once after `enableLogger` has been called.
+
+```ts
+import { enableLogger, oxid } from 'oxid';
+
+// logs are not emitted
+oxid.get().subscribe();
+
+enableLogger(console.log.bind(console));
+
+// now internal logs will be emitted via console
+oxid.get().subscribe();
+```
+
 ## Building / Testing
 
 Few npm scripts are supported for build / test code.
