@@ -127,6 +127,11 @@ const isURLSearchParams = (val: unknown) =>
  *  navigator.product -> 'NativeScript' or 'NS'
  */
 const isStandardBrowserEnv = () => {
+  //Short curcuit for node environment
+  if (isNode()) {
+    return false;
+  }
+
   if (
     typeof navigator !== 'undefined' &&
     (navigator.product === 'ReactNative' || navigator.product === 'NativeScript' || navigator.product === 'NS')
