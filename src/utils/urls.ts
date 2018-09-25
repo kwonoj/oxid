@@ -43,8 +43,8 @@ const buildURL = (
   } else if (isURLSearchParams(params)) {
     return constructUrl(params.toString());
   } else {
-    //TODO: remove type casting when `Object.entries` supported in type definition
-    const parts = ((Object as any).entries(params) as Array<[string, string]>)
+    const parts = Object.keys(params)
+      .map(key => [key, params[key]])
       .filter(([, value]) => value !== null && typeof value !== 'undefined')
       .reduce(
         (acc, [key, value]) => {
@@ -126,13 +126,13 @@ const isAbsoluteURL = (url: string): boolean => /^([a-z][a-z\d\+\-\.]*:)?\/\//i.
  */
 const isURLSameOrigin = isStandardBrowserEnv()
   ? (() => {
-    const originURL = resolveURL(window.location.href);
+      const originURL = resolveURL(window.location.href);
 
-    return (requestURL: string | Partial<ReturnType<typeof resolveURL>>) => {
-      const parsed = isString(requestURL) ? resolveURL(requestURL) : requestURL;
-      return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
-    };
-  })()
+      return (requestURL: string | Partial<ReturnType<typeof resolveURL>>) => {
+        const parsed = isString(requestURL) ? resolveURL(requestURL) : requestURL;
+        return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
+      };
+    })()
   : () => true;
 
 export { buildURL, combineURLs, isAbsoluteURL, isURLSameOrigin };
