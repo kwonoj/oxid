@@ -25,7 +25,10 @@ module.exports = (config: { set: (config: object) => void }) => {
             test: /\.tsx?$/,
             loader: 'ts-loader',
             options: {
-              configFile: 'tsconfig.base.json'
+              configFile: 'tsconfig.json',
+              compilerOptions: {
+                noEmit: false
+              }
             }
           },
           {

@@ -15,7 +15,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es5",
-    "outDir": "./.tmp",
+    "noEmit": true,
     "lib": [
       "es5",
       "es2015"
