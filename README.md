@@ -2,6 +2,7 @@
 [![Build Status](https://ojkwon.visualstudio.com/oxid/_apis/build/status/kwonoj.oxid?branchName=master)](https://ojkwon.visualstudio.com/oxid/_build/latest?definitionId=1)
 [![Coverage](https://badgen.net/codecov/c/github/kwonoj/oxid)](https://codecov.io/gh/kwonoj/oxid/branch/master)
 [![Node engine version](https://badgen.net/npm/node/oxid)](https://www.npmjs.com/package/oxid)
+[![Minified, zipped size](https://badgen.net/bundlephobia/minzip/oxid)](https://badgen.net/bundlephobia/minzip/oxid)
 
 # Oxid
 
@@ -116,7 +117,6 @@ Oxid itself doesn't have mechanism to write log. Instead, it exposes a function 
 ```ts
 function enableLogger(logger: logFunctionType): void;
 function enableLogger(logger: Partial<Logger>): void;
-function enableLogger(logger: logFunctionType | Partial<Logger>);
 ```
 
 It could be either single function, or object have loglevels like debug, info, warn, error. Notes `enableLogger` is **Global function** to affects any instance of oxid, and only starts emitting log once after `enableLogger` has been called.
