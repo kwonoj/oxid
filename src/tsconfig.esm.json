@@ -1,9 +1,9 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "esnext",
     "outDir": "../dist/esm",
-    "resolveJsonModule": false
+    "noEmit": false
   },
   "include": [
     "./**/*.ts"

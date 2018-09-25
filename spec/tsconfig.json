@@ -1,8 +1,7 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "declaration": false,
-    "outDir": "../.tmp"
+    "declaration": false
   },
   "references": [
     {

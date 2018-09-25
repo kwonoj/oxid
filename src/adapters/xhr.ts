@@ -103,7 +103,8 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
 
     // Add headers to the request
     if ('setRequestHeader' in xhr && !!requestHeaders) {
-      ((Object as any).entries(requestHeaders) as Array<[string, string]>)
+      Object.keys(requestHeaders)
+        .map(key => [key, requestHeaders[key]])
         .filter(
           ([key]) =>
             // Ignore remove Content-Type if data is undefined

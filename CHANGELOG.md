@@ -1,3 +1,18 @@
+<a name="0.0.4"></a>
+## [0.0.4](https://github.com/kwonoj/oxid/compare/v0.0.3...v0.0.4) (2018-09-25)
+
+
+### Bug Fixes
+
+* **isstandardbrowserenv:** short curcuit for node ([d82c36f](https://github.com/kwonoj/oxid/commit/d82c36f))
+
+
+### Features
+
+* **logger:** remove debug from dep, introduce enablelogger ([fa4e656](https://github.com/kwonoj/oxid/commit/fa4e656))
+
+
+
 <a name="0.0.3"></a>
 ## [0.0.3](https://github.com/kwonoj/oxid/compare/v0.0.2...v0.0.3) (2018-09-25)
 

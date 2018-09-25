@@ -159,6 +159,7 @@ export {
   isNode,
   isFormData,
   isFile,
+  isFunction,
   isBlob,
   isString,
   isObject,

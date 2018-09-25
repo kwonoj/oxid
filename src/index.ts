@@ -7,6 +7,7 @@ export * from './defaultOptions';
 export * from './Request';
 export * from './Response';
 export * from './metadata';
+export { logFunctionType, Logger, enableLogger } from './utils/log';
 
 /**
  * Create an instance of Oxid, only wraps class ctor.
