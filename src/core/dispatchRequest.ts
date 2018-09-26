@@ -58,7 +58,9 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
     ...(rest || {})
   };
 
-  (Object as any).values(Method).forEach((method: string) => delete config.headers[method]);
+  [Method.Delete, Method.Get, Method.Head, Method.Options, Method.Patch, Method.Post, Method.Put].forEach(
+    (method: string) => delete config.headers[method]
+  );
 
   const adapter = config.adapter || defaultOptions.adapter!;
 

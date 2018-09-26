@@ -6,7 +6,7 @@ import { enhanceError } from './utils/createError';
  *
  *
  */
-enum HttpEventType {
+const enum HttpEventType {
   /**
    * The request was sent out over the wire.
    */

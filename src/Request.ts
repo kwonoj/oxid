@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { HttpEvent } from './Response';
 
-enum Method {
+const enum Method {
   Get = 'get',
   Delete = 'delete',
   Head = 'head',
@@ -11,7 +11,7 @@ enum Method {
   Patch = 'patch'
 }
 
-enum ResponseType {
+const enum ResponseType {
   ArrayBuffer = 'arraybuffer',
   Blob = 'blob',
   Document = 'document',
