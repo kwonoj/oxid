@@ -220,7 +220,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     // The onError callback is called when something goes wrong at the network level.
     // Connection timeout, DNS error, offline, etc. These are actual errors, and are
     // transmitted on the error channel.
-    const onError = (_error: ErrorEvent) => {
+    const onError = () => {
       // Request that using file: protocol, most browsers
       // will return status as 0 even though it's a successful request
       if (xhr.status === 0 && !!xhr.responseURL && xhr.responseURL.indexOf('file:') === 0) {

@@ -34,8 +34,7 @@ const enhanceError = (
   error.response = response;
 
   error.toJSON = () =>
-    pick(
-      error,
+    pick(error, [
       'message',
       'name',
       'description',
@@ -46,7 +45,7 @@ const enhanceError = (
       'stack',
       'config',
       'code'
-    );
+    ]);
   return error as any;
 };
 
