@@ -9,9 +9,5 @@
     "emitDeclarationOnly": true,
     "removeComments": false,
     "composite": true,
-    "noEmit": false,
-  },
-  "include": [
-    "./**/*.ts"
-  ]
+  }
 }
