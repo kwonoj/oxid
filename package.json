@@ -69,7 +69,7 @@
     "test:size": "size-limit",
     "lint:code": "tslint -c tslint.json -p tsconfig.json \"src/**/*.ts\" \"spec/**/*.ts\"",
     "lint:circular": "depcruise --validate .dependency-cruiser.json -x \"^node_modules\" src",
-    "build": "tsc -b --verbose ./src/tsconfig.*.json ./spec/tsconfig.json",
+    "build": "tsc -b --verbose ./src/tsconfig.cjs.json ./src/tsconfig.esm.json ./src/tsconfig.types.json ./spec/tsconfig.json",
     "build:metadata": "ts-node ./scripts/buildMetadata.ts",
     "build:clean": "shx rm -rf ./dist",
     "commit": "git-cz -S",
