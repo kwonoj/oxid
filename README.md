@@ -57,7 +57,7 @@ class Oxid {
 ```
 
 ### Configure oxid
-Oxid includes default set of configuration values. This value will be used when use request instance `oxid` or creating new instance `Oxid` without any custom configuration values. If partial configuration values are provided into when making request / constructing instance, it'll be merged into default configuration values.
+Oxid includes default set of configuration values. This value will be used when use request instance `oxid`. When creating new instance via class, it doesn't include any option values by default, have to specify via class constructor. Still, individual method (`request()` and rest) accepts `RequestConfig` separately, which will merge into configurations when instance is being created.
 
 ```ts
 interface RequestConfigBase {
@@ -108,7 +108,19 @@ interface RequestConfigBrowser extends RequestConfigBase {
 }
 ```
 
-Note `defaultOptions` object is immutable. Changing, reassigning values into existing default configuration value won't work, instead should supply new configuration object.
+```
+import {oxid, Oxid, defaultOptions} from 'oxid';
+
+oxid.get(url); //will use `defaultOptions`
+oxid.get({url, withCredentials: false}); //will use `defaultOptions`, override `withCredentials`
+
+const another = new Oxid(); //no base configueration
+const anotherWithConfig = new oxid({withCredendials: false}) //set base configuration
+
+anotherWithConfig.get({url, withCredentials: false}) //will use config when instance created, override `withCredentials`
+```
+
+Note `defaultOptions` object is immutable. Changing, reassigning values into existing default configuration value won't work, instead should build new configuration object.
 
 ## Debugging internals of oxid
 
