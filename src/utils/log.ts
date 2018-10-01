@@ -46,24 +46,17 @@ const getLogger = (identifier: string): Logger => {
 
 /**
  * Set logger for prints out internal behavior.
- * @param {logFunctionType | Logger} logger Logger object contains loglevel function (debug, info, warn, error)
+ * @param {logFunctionType | Partial<Logger>} logger Logger object contains loglevel function (debug, info, warn, error)
  * or single function to log. If single function is provided, all loglevel will use given function.
- * If logger object is provided, it should have all loglevel function.
+ * If logger object is partially implements logger, only available loglevel will be written.
  */
 function enableLogger(logger: logFunctionType): void;
 function enableLogger(logger: Partial<Logger>): void;
 function enableLogger(logger: logFunctionType | Partial<Logger>) {
   const isLogFunction = isFunction(logger);
-  const baseLogger = Object.keys(logger)
-    .map(key => [key, logger[key]])
-    .filter(value => !!value[1])[0];
 
-  if (!baseLogger) {
-    throw new Error('at least one logger function need to be supplied');
-  }
-
-  //if logger is fn, assign to all loglevel. If logger is partial object, assign first loglevel into empty one
-  Object.keys(log).forEach(key => (log[key] = isLogFunction ? logger : logger[key] || baseLogger));
+  //if logger is fn, assign to all loglevel. If logger is partial object, assign available logger or fall back to noop.
+  Object.keys(log).forEach(key => (log[key] = isLogFunction ? logger : logger[key] || noopLog));
 }
 
 export { logFunctionType, Logger, enableLogger, getLogger };
