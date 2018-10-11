@@ -13,7 +13,7 @@
 This has a peer dependencies of `rxjs@6`, which will have to be installed as well
 
 ```sh
-npm instll oxid
+npm install oxid
 ```
 
 ## Usage
