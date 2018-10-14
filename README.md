@@ -80,8 +80,6 @@ interface RequestConfigBase {
   validateStatus?: (status: number) => boolean;
   maxRedirects?: number;
   socketPath?: string | null;
-
-
   proxy?: ProxyConfig;
 }
 
@@ -108,7 +106,7 @@ interface RequestConfigBrowser extends RequestConfigBase {
 }
 ```
 
-```
+```ts
 import {oxid, Oxid, defaultOptions} from 'oxid';
 
 oxid.get(url); //will use `defaultOptions`
