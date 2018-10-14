@@ -17,7 +17,7 @@ import { HttpEvent, HttpEventType, HttpResponse } from '../Response';
  */
 const transformData = (
   data: object | string,
-  headers: Array<Record<string, any>>,
+  headers: Record<string, any>,
   transformFunction?: Array<Transformer> | Transformer
 ): object => {
   const functionArray = Array.isArray(transformFunction)
@@ -59,7 +59,7 @@ const dispatchRequest = <T extends object | string = any>(config: RequestConfig)
   };
 
   [Method.Delete, Method.Get, Method.Head, Method.Options, Method.Patch, Method.Post, Method.Put].forEach(
-    (method: string) => delete config.headers[method]
+    (method: string) => delete (config.headers || {})[method]
   );
 
   const adapter = config.adapter || defaultOptions.adapter!;

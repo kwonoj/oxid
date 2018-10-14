@@ -33,7 +33,7 @@ const getDefaultAdapter = (): Adapter => (isNode() ? require('./adapters/http') 
  */
 const validateStatus = (status: number) => status >= 200 && status < 300;
 
-const defaultTransformRequest = (data: object | string, headers?: Array<Record<string, any>>) => {
+const defaultTransformRequest = (data: object | string, headers?: Record<string, any>) => {
   normalizeHeaderName(headers, 'Accept');
   normalizeHeaderName(headers, 'Content-Type');
 

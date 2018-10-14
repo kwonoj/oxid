@@ -66,7 +66,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     }
 
     const requestData = config.data;
-    const requestHeaders = config.headers;
+    const requestHeaders = config.headers || {};
 
     if (isFormData(requestData)) {
       delete requestHeaders['Content-Type']; // Let the browser set it
