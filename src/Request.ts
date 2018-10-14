@@ -37,34 +37,33 @@ interface Adapter {
 }
 
 interface Transformer {
-  (data: object | string, headers?: Array<Record<string, any>>): object | string;
+  (data: object | string, headers?: Record<string, any>): object | string;
 }
 
 interface RequestConfigBase {
-  url?: string;
-  method?: Method;
-  baseURL?: string;
-  transformRequest?: Transformer | Array<Transformer>;
-  transformResponse?: Transformer | Array<Transformer>;
-  headers?: any;
-  params?: any;
-  paramsSerializer?: (params: any) => string;
-  data?: any;
-  adapter?: Adapter;
-  auth?: BasicCredentials;
-  responseType?: ResponseType;
-  responseEncoding?: string;
-  xsrfCookieName?: string;
-  xsrfHeaderName?: string;
-  maxContentLength?: number;
-  validateStatus?: (status: number) => boolean;
-  maxRedirects?: number;
-  socketPath?: string | null;
-
-  proxy?: ProxyConfig;
+  url: string;
+  method: Method;
+  baseURL: string;
+  transformRequest: Transformer | Array<Transformer>;
+  transformResponse: Transformer | Array<Transformer>;
+  headers: Record<string, any>;
+  params: any;
+  paramsSerializer: (params: any) => string;
+  data: any;
+  adapter: Adapter;
+  auth: BasicCredentials;
+  responseType: ResponseType;
+  responseEncoding: string;
+  xsrfCookieName: string;
+  xsrfHeaderName: string;
+  maxContentLength: number;
+  validateStatus: (status: number) => boolean;
+  maxRedirects: number;
+  socketPath: string;
+  proxy: ProxyConfig;
 }
 
-interface RequestConfigNode extends RequestConfigBase {
+interface RequestConfigNode extends Partial<RequestConfigBase> {
   /**
    * Custom agent to be used in node http request.
    */
@@ -81,7 +80,7 @@ interface RequestConfigNode extends RequestConfigBase {
   transport?: { request: Function };
 }
 
-interface RequestConfigBrowser extends RequestConfigBase {
+interface RequestConfigBrowser extends Partial<RequestConfigBase> {
   /**
    * Emit progress event for xhr request.
    */
