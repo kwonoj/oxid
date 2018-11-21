@@ -13,10 +13,13 @@ import { isFormData, isStandardBrowserEnv, isString, XSRF_HEADER_NAME } from '..
 import { cookies } from '../utils/cookies';
 import { createError } from '../utils/createError';
 import { getObserverHandler } from '../utils/getObserverHandler';
+import { getLogger } from '../utils/log';
 import { parseHeaders } from '../utils/parseHeaders';
 import { parseJsonResponse } from '../utils/parseJsonResponse';
 import { buildURL, isURLSameOrigin } from '../utils/urls';
 import { xhrBackend } from './xhrBackend';
+
+const log = getLogger(`xhrAdapter`);
 
 /**
  * Determine an appropriate URL for the response, by checking either
@@ -24,11 +27,16 @@ import { xhrBackend } from './xhrBackend';
  */
 function getResponseUrl(xhr: any): string | null {
   if ('responseURL' in xhr && xhr.responseURL) {
+    log.debug(`getResponseUrl: xhr contains responseUrl, returning`, xhr.responseURL);
     return xhr.responseURL;
   }
   if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
-    return xhr.getResponseHeader('X-Request-URL');
+    const ret = xhr.getResponseHeader('X-Request-URL');
+    log.debug(`getResponseUrl: xhr has response header 'X-Request-URL'`, ret);
+    return ret;
   }
+
+  log.debug(`getResponseUrl: cannot detect responseUrl`);
   return null;
 }
 
@@ -42,6 +50,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     // This is the return from the Observable function, which is the
     // request cancellation handler.
     const tearDown = () => {
+      log.debug(`Teardown subscription`);
       /* tslint:disable:no-use-before-declare */
       // On a cancellation, remove all registered event listeners.
       xhr.removeEventListener('error', onError);
@@ -57,6 +66,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       /* tslint:enable:no-use-before-declare */
 
       // Finally, abort the in-flight request.
+      log.info(`Try to abort current xhr request`);
       xhr.abort();
     };
 
@@ -69,6 +79,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     const requestHeaders = config.headers || {};
 
     if (isFormData(requestData)) {
+      log.debug(`Requested data is form, remove 'Content-Type' header and let browser set it accordingly`);
       delete requestHeaders['Content-Type']; // Let the browser set it
     }
 
@@ -76,15 +87,29 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     if (config.auth) {
       const username = config.auth.username || '';
       const password = config.auth.password || '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+      requestHeaders.Authorization = 'Basic ' + btoa(`${username}:${password}`);
+      log.debug(`Setting auth via basic auth configuration, setting 'Authorization' header`, { username });
     }
 
     xhr.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer));
+    log.info(`Opening XMLHttpRequest`);
+    log.debug(`With constructed options`, {
+      ...config,
+      auth: config.auth ? '********' : undefined,
+      headers: requestHeaders.Authorization
+        ? {
+            ...requestHeaders,
+            Authorization: '********'
+          }
+        : requestHeaders
+    });
 
     // Add withCredentials to request if needed
     if (!!withCredentials) {
       xhr.withCredentials = true;
     }
+
+    log.debug(`Setting withCredentials`, xhr.withCredentials);
 
     // Add xsrf header
     // This is only done if running in a standard browser environment.
@@ -98,6 +123,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
 
       if (xsrfValue) {
         requestHeaders[config.xsrfHeaderName || XSRF_HEADER_NAME] = xsrfValue;
+        log.debug(`Assign xsrf header`);
       }
     }
 
@@ -115,11 +141,13 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       // Add an Accept header if one isn't present already.
       if (!requestHeaders['Accept']) {
         xhr.setRequestHeader('Accept', 'application/json, text/plain, */*');
+        log.debug(`Applying 'Accept' header to 'application/json, text/plain, */*'`);
       }
     }
 
     // Add responseType to request if needed
     if (config.responseType) {
+      log.debug(`Configure response type`, config.responseType);
       try {
         const responseType = config.responseType.toLowerCase() as XMLHttpRequestResponseType;
 
@@ -135,6 +163,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
         if (config.responseType !== 'json') {
           throw e;
         }
+        log.warn(`Not able to apply response type`, { error: e });
       }
     }
 
@@ -165,6 +194,8 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
 
       // Construct the HttpHeaderResponse and memoize it.
       headerResponse = { headers, status, statusText, url: url!, config, type: HttpEventType.ResponseHeader };
+      log.debug(`partialFromXhr received HttpHeaderResponse, memoiing it`, { ...headerResponse, config: undefined });
+
       return headerResponse;
     };
 
@@ -181,6 +212,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       if (status !== 204) {
         // Use XMLHttpRequest.response if set, responseText otherwise.
         body = typeof xhr.response === 'undefined' ? xhr.responseText : xhr.response;
+        log.debug(`Assigning body for response since status is not 204`);
       }
 
       // Normalize another potential bug (this one comes from CORS).
@@ -192,6 +224,8 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       // will have done that already).
       const parsedBody =
         config.responseType === 'json' && isString(body) ? parseJsonResponse(status, body) : { ok: true, body };
+
+      log.debug('Received body', { parsedBody });
 
       // Prepare the response
       const responseData =
@@ -211,6 +245,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       if (!parsedBody.ok) {
         emitError(createError('Response parse failed', config, response.statusText, xhr, response));
       } else {
+        log.info(`Completing request`);
         // The full body has been received and delivered, no further events
         // are possible. This request is complete.
         emitComplete(response);
@@ -224,6 +259,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
       // Request that using file: protocol, most browsers
       // will return status as 0 even though it's a successful request
       if (xhr.status === 0 && !!xhr.responseURL && xhr.responseURL.indexOf('file:') === 0) {
+        log.debug(`Ignoring error event handler for file:// protocol`);
         return;
       }
       emitError(createError(xhr.statusText || 'Network Error', config, null, xhr));
@@ -243,6 +279,7 @@ const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
     const onDownProgress = (event: ProgressEvent) => {
       // Send the HttpResponseHeaders event if it hasn't been sent already.
       if (!sentHeaders) {
+        log.debug(`Sending header response for download progress`);
         observer.next(partialFromXhr());
         sentHeaders = true;
       }
