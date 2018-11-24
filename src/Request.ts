@@ -88,6 +88,10 @@ interface RequestConfigXHR extends Partial<RequestConfigBase> {
   withCredentials?: boolean;
 }
 
+interface RequestConfigFetch extends Partial<RequestConfigBase> {
+  credentials: 'include' | 'same-origin' | 'omit'
+}
+
 /**
  * Union type of RequestConfig for node / xhr.
  */
@@ -98,6 +102,7 @@ export {
   ResponseType,
   RequestConfigNode,
   RequestConfigXHR,
+  RequestConfigFetch,
   RequestConfig,
   ProxyConfig,
   Adapter,
