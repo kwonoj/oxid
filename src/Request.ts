@@ -80,7 +80,7 @@ interface RequestConfigNode extends Partial<RequestConfigBase> {
   transport?: { request: Function };
 }
 
-interface RequestConfigBrowser extends Partial<RequestConfigBase> {
+interface RequestConfigXHR extends Partial<RequestConfigBase> {
   /**
    * Emit progress event for xhr request.
    */
@@ -89,15 +89,15 @@ interface RequestConfigBrowser extends Partial<RequestConfigBase> {
 }
 
 /**
- * Union type of RequestConfig for node / browser.
+ * Union type of RequestConfig for node / xhr.
  */
-type RequestConfig = RequestConfigNode | RequestConfigBrowser;
+type RequestConfig = RequestConfigNode | RequestConfigXHR;
 
 export {
   Method,
   ResponseType,
   RequestConfigNode,
-  RequestConfigBrowser,
+  RequestConfigXHR,
   RequestConfig,
   ProxyConfig,
   Adapter,
