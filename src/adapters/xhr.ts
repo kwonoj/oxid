@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 import { Observable, Observer } from 'rxjs';
-import { RequestConfigBrowser, ResponseType } from '../Request';
+import { RequestConfigXHR, ResponseType } from '../Request';
 import {
   HttpDownloadProgressEvent,
   HttpEvent,
@@ -40,7 +40,7 @@ function getResponseUrl(xhr: any): string | null {
   return null;
 }
 
-const xhrAdapter = <T = any>(config: RequestConfigBrowser) =>
+const xhrAdapter = <T = any>(config: RequestConfigXHR) =>
   new Observable((observer: Observer<HttpEvent<T>>) => {
     const { reportProgress, withCredentials } = config;
     const { emitError, emitComplete } = getObserverHandler(observer);
